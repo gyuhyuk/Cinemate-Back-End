@@ -1,5 +1,6 @@
 package com.capstone.cinemate.Review.domain;
 
+import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Movie.domain.Movie;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,12 +25,13 @@ public class MovieReview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // PK
 
-
     @Setter @ManyToOne(optional = false) private Movie movie; // 영화 (ID)
     @Setter @Column(nullable = false, length = 2000) private String content; // 리뷰 내용
     @Setter @Column(nullable = false) private Double rating; // 평점
 
     private Long likes = 0L; // 좋아요 수
+
+    @Setter @ManyToOne(optional = false) private Member member; // 멤버 (ID)
 
     @CreatedDate @Column(nullable = false) private LocalDateTime createdAt; // 작성일시
     @CreatedBy @Column(nullable = false, length = 100) private String createdBy; // 작성자
