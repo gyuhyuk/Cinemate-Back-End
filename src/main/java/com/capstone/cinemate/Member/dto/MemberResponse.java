@@ -13,6 +13,4 @@ public class MemberResponse {
         this.memberId = memberId;
         this.nickName = nickName;
     }
-
-
 }

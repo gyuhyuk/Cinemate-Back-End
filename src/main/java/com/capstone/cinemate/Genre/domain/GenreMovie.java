@@ -2,9 +2,9 @@ package com.capstone.cinemate.Genre.domain;
 
 import com.capstone.cinemate.Movie.domain.Movie;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+// 영화와 장르는 다대일 (한개의 영화에는 여러개의 장르가 포함)
 @Entity
 @Getter
 @Setter

@@ -1,6 +1,6 @@
 package com.capstone.cinemate.Movie.domain;
 
-import com.capstone.cinemate.Review.domain.MovieReview;
+import com.capstone.cinemate.Review.domain.Review;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.ToString;
@@ -31,11 +31,12 @@ public class Movie {
     private String posterPath; // 포스터 이미지
     private String overview; // 줄거리
 
+    // 영화와 리뷰 (영화는 여러개의 리뷰를 가짐)
     @OrderBy("id")
 //    @OrderBy("likes")
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     @ToString.Exclude
-    private final Set<MovieReview> movieReviews = new LinkedHashSet<>();
+    private final Set<Review> movieReviews = new LinkedHashSet<>();
 
     protected Movie () {}
 

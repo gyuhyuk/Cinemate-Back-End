@@ -4,6 +4,7 @@ import com.capstone.cinemate.Member.domain.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+// 영화와 멤버는 다대다
 @Entity
 @Getter
 public class MemberMovie {

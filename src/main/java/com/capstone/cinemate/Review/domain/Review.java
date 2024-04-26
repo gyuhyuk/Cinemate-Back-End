@@ -20,7 +20,7 @@ import java.util.Objects;
 @Table(indexes = {
         @Index(columnList = "movieId")
 })
-public class MovieReview {
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // PK
@@ -38,22 +38,22 @@ public class MovieReview {
     @LastModifiedDate @Column(nullable = false) private LocalDateTime modifiedAt; // 수정일시
     @LastModifiedBy @Column(nullable = false, length = 100) private String modifiedBy; // 수정자
 
-    protected MovieReview() {}
+    protected Review() {}
 
-    private MovieReview(Movie movie, String content, Double rating) {
+    private Review(Movie movie, String content, Double rating) {
         this.movie = movie;
         this.content = content;
         this.rating = rating;
     }
 
-    public static MovieReview of(Movie movie, String content, Double rating) {
-      return new MovieReview(movie, content, rating);
+    public static Review of(Movie movie, String content, Double rating) {
+      return new Review(movie, content, rating);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MovieReview that)) return false;
+        if (!(o instanceof Review that)) return false;
         return id != null && id.equals(that.id);
     }
 

@@ -2,9 +2,9 @@ package com.capstone.cinemate.Genre.domain;
 
 import com.capstone.cinemate.Member.domain.Member;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+// 장르와 멤버는 다대다
 @Entity
 @Getter
 @Setter
