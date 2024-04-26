@@ -1,19 +1,17 @@
 package com.capstone.cinemate.Member.service;
 
-import com.capstone.cinemate.Member.domain.AuthEntity;
 import com.capstone.cinemate.Member.domain.Member;
-import com.capstone.cinemate.Member.dto.MemberRequest;
-import com.capstone.cinemate.Member.dto.MemberResponse;
+import com.capstone.cinemate.Member.dto.LoginRequest;
+import com.capstone.cinemate.Member.dto.SignUpRequest;
+import com.capstone.cinemate.Member.dto.SignUpResponse;
 import com.capstone.cinemate.Member.dto.TokenResponse;
 import com.capstone.cinemate.Member.repository.AuthRepository;
 import com.capstone.cinemate.Member.repository.MemberRepository;
 import com.capstone.cinemate.common.jwt.TokenUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,18 +25,21 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     public Optional<Member> findByMemberId(String memberId) {
-
         return memberRepository.findByMemberId(memberId);
     }
+    public Optional<Member> findByNickName(String nickName) {
+        return memberRepository.findByNickName(nickName);
+    }
+
 
     @Transactional
-    public MemberResponse signUp(MemberRequest memberRequest) {
+    public SignUpResponse signUp(SignUpRequest signUpRequest) {
         Member member =
                 memberRepository.save(
                         Member.builder()
-                                .password(passwordEncoder.encode(memberRequest.getPassword()))
-                                .memberId(memberRequest.getMemberId())
-                                .nickName(memberRequest.getNickName())
+                                .password(passwordEncoder.encode(signUpRequest.getPassword()))
+                                .memberId(signUpRequest.getMemberId())
+                                .nickName(signUpRequest.getNickName())
                                 .build());
 
 //        String accessToken = tokenUtils.generateJwtToken(member);
@@ -48,25 +49,24 @@ public class MemberService {
 //                AuthEntity.builder().member(member).refreshToken(refreshToken).build());
 
 //        return TokenResponse.builder().ACCESS_TOKEN(accessToken).REFRESH_TOKEN(refreshToken).build();
-        return new MemberResponse(member.getMemberId(), member.getNickName());
+        return new SignUpResponse(member.getMemberId(), member.getNickName());
     }
 
     @Transactional
-    public TokenResponse signIn(MemberRequest memberRequest) throws Exception {
+    public TokenResponse signIn(LoginRequest loginRequest) throws Exception {
         Member member =
                 memberRepository
-                        .findByMemberId(memberRequest.getMemberId())
+                        .findByMemberId(loginRequest.getMemberId())
                         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        if (!passwordEncoder.matches(memberRequest.getPassword(), member.getPassword())) {
-            throw new Exception("비밀번호가 일치하지 않습니다.");
+        if (!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다."); // 예외 타입 변경
         }
-
         String accessToken = tokenUtils.generateJwtToken(member);
 
         // RefreshToken 관련 로직을 제거하고 AccessToken만 반환합니다.
         return TokenResponse.builder()
-                .ACCESS_TOKEN(accessToken)
+                .accessToken(accessToken)
                 .build();
     }
 
