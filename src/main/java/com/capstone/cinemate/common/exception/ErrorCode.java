@@ -37,7 +37,7 @@ public enum ErrorCode {
     SERVER_ERROR(500, "INTERNAL_SERVER_ERROR", "예기치 못한 오류가 발생하였습니다."),
     IMAGE_UPLOAD_FAIL(500, "IMAGE_UPLOAD_FAIL", "이미지 업로드에 실패했습니다.");
 
-    private int status;
+    private final int status;
     private final String code;
     private final String cause;
 }
