@@ -4,14 +4,11 @@ import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Member.dto.LoginRequest;
 import com.capstone.cinemate.Member.dto.SignUpRequest;
 import com.capstone.cinemate.Member.service.MemberService;
+import com.capstone.cinemate.common.exception.CustomException;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,17 +40,18 @@ public class MemberController {
         return ResponseEntity.ok(memberService.signUp(signUpRequest));
     }
     @PostMapping("/api/sign-in")
-    public ResponseEntity<?> signIn(@Valid @RequestBody LoginRequest loginRequest, Errors errors) throws Exception {
-            if (errors.hasErrors()) {
-                // 유효성 검사 실패 시 구체적인 오류 메시지를 반환합니다.
-                List<String> errorMessages = errors.getAllErrors()
-                        .stream()
-                        .map(error -> error.getDefaultMessage())
-                        .collect(Collectors.toList());
-                return ResponseEntity.badRequest().body(errorMessages); // 오류 메시지 리스트를 포함하여 반환
-            }
-            return ResponseEntity.ok().body(memberService.signIn(loginRequest));
+    public ResponseEntity<?> signIn(@Valid @RequestBody LoginRequest loginRequest, Errors errors) throws CustomException {
+//        if (errors.hasErrors()) {
+//            // 유효성 검사 실패 시 구체적인 오류 메시지를 반환합니다.
+//            List<String> errorMessages = errors.getAllErrors()
+//                    .stream()
+//                    .map(error -> error.getDefaultMessage())
+//                    .collect(Collectors.toList());
+//            return ResponseEntity.badRequest().body(errorMessages); // 오류 메시지 리스트를 포함하여 반환
+//        }
+        return ResponseEntity.ok().body(memberService.signIn(loginRequest));
     }
+
 
     @GetMapping("/info")
     public ResponseEntity<List<Member>> findMember() {

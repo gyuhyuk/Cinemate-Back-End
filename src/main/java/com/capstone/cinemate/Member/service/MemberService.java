@@ -7,6 +7,8 @@ import com.capstone.cinemate.Member.dto.SignUpResponse;
 import com.capstone.cinemate.Member.dto.TokenResponse;
 import com.capstone.cinemate.Member.repository.AuthRepository;
 import com.capstone.cinemate.Member.repository.MemberRepository;
+import com.capstone.cinemate.common.exception.CustomException;
+import com.capstone.cinemate.common.exception.ErrorCode;
 import com.capstone.cinemate.common.jwt.TokenUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -53,21 +55,25 @@ public class MemberService {
     }
 
     @Transactional
-    public TokenResponse signIn(LoginRequest loginRequest) throws Exception {
-        Member member =
-                memberRepository
-                        .findByMemberId(loginRequest.getMemberId())
-                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    public TokenResponse signIn(LoginRequest loginRequest) throws CustomException {
+            System.out.println(loginRequest.getMemberId());
+            Member member =
+                    memberRepository
+                            .findByMemberId(loginRequest.getMemberId())
+                            .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        if (!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다."); // 예외 타입 변경
-        }
-        String accessToken = tokenUtils.generateJwtToken(member);
+//        if (!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
+//            throw new CustomException(ErrorCode.WRONG_PASSWORD);
+//        }
+            if(!hasSamePassword(member,loginRequest)){
+                throw new CustomException(ErrorCode.WRONG_PASSWORD);
+            }
+            String accessToken = tokenUtils.generateJwtToken(member);
 
-        // RefreshToken 관련 로직을 제거하고 AccessToken만 반환합니다.
-        return TokenResponse.builder()
-                .accessToken(accessToken)
-                .build();
+            // RefreshToken 관련 로직을 제거하고 AccessToken만 반환합니다.
+            return TokenResponse.builder()
+                    .accessToken(accessToken)
+                    .build();
     }
 
 //    @Transactional
@@ -99,6 +105,9 @@ public class MemberService {
 //        return TokenResponse.builder().ACCESS_TOKEN(accessToken).REFRESH_TOKEN(refreshToken).build();
 //    }
 
+    private boolean hasSamePassword(Member member, LoginRequest loginRequest) {
+        return passwordEncoder.matches(loginRequest.getPassword(), member.getPassword());
+    }
 
     public List<Member> findMembers() {
         return memberRepository.findAll();
