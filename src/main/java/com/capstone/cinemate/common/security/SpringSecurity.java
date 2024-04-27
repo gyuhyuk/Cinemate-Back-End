@@ -21,10 +21,10 @@ public class SpringSecurity {
 //        http.authorizeHttpRequests(auth -> auth.requestMatchers("/**").permitAll().anyRequest().authenticated());
 //        return http.build();
         http
-                // token을 사용하는 방식이기 때문에 csrf를 disable합니다.
+                // token을 사용하는 방식이기 때문에 csrf를 disable
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/api/sign-in", "/api/sign-up").permitAll()
+                        .requestMatchers("/api/sign-in", "/api/sign-up", "/api/memberId/**", "/api/nickname/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 // 세션을 사용하지 않기 때문에 STATELESS로 설정

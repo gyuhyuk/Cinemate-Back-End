@@ -33,9 +33,16 @@ public class MemberService {
         return memberRepository.findByNickName(nickName);
     }
 
-
     @Transactional
-    public SignUpResponse signUp(SignUpRequest signUpRequest) {
+    public SignUpResponse signUp(SignUpRequest signUpRequest) throws CustomException {
+        // 회원 닉네임 중복 검사
+        if (memberRepository.findByNickName(signUpRequest.getNickName()).isPresent()) {
+            throw new CustomException(ErrorCode.DUPLICATE_NICKNAME_RESOURCE);
+        }
+        // 회원 ID 중복 검사
+        if (memberRepository.findByMemberId(signUpRequest.getMemberId()).isPresent()) {
+            throw new CustomException(ErrorCode.DUPLICATE_EMAIL_RESOURCE);
+        }
         Member member =
                 memberRepository.save(
                         Member.builder()
@@ -46,67 +53,40 @@ public class MemberService {
 
 //        String accessToken = tokenUtils.generateJwtToken(member);
 //        String refreshToken = tokenUtils.saveRefreshToken(member);
-
 //        authRepository.save(
 //                AuthEntity.builder().member(member).refreshToken(refreshToken).build());
-
 //        return TokenResponse.builder().ACCESS_TOKEN(accessToken).REFRESH_TOKEN(refreshToken).build();
         return new SignUpResponse(member.getMemberId(), member.getNickName());
     }
 
     @Transactional
     public TokenResponse signIn(LoginRequest loginRequest) throws CustomException {
-            System.out.println(loginRequest.getMemberId());
             Member member =
                     memberRepository
                             .findByMemberId(loginRequest.getMemberId())
                             .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-//        if (!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
-//            throw new CustomException(ErrorCode.WRONG_PASSWORD);
-//        }
             if(!hasSamePassword(member,loginRequest)){
                 throw new CustomException(ErrorCode.WRONG_PASSWORD);
             }
+
             String accessToken = tokenUtils.generateJwtToken(member);
 
-            // RefreshToken 관련 로직을 제거하고 AccessToken만 반환합니다.
             return TokenResponse.builder()
                     .accessToken(accessToken)
                     .build();
     }
 
-//    @Transactional
-//    public TokenResponse signIn(MemberRequest memberRequest) throws Exception {
-//        Member member =
-//                memberRepository
-//                        .findByMemberId(memberRequest.getMemberId())
-//                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-//
-//        Optional<AuthEntity> authEntityOptional =
-//                authRepository.findByMemberId(member.getId());
-//
-//        String accessToken = tokenUtils.generateJwtToken(member);
-//        String refreshToken;
-//
-//        if (authEntityOptional.isPresent()) {
-//            AuthEntity authEntity = authEntityOptional.get();
-//            refreshToken = authEntity.getRefreshToken();
-//            if (!tokenUtils.isValidRefreshToken(refreshToken)) {
-//                refreshToken = tokenUtils.saveRefreshToken(member);
-//                authEntity.refreshUpdate(refreshToken);
-//            }
-//        } else {
-//            // 리프레시 토큰이 없는 경우 새로 생성하고 저장
-//            refreshToken = tokenUtils.saveRefreshToken(member);
-//            authRepository.save(AuthEntity.builder().member(member).refreshToken(refreshToken).build());
-//        }
-//
-//        return TokenResponse.builder().ACCESS_TOKEN(accessToken).REFRESH_TOKEN(refreshToken).build();
-//    }
-
     private boolean hasSamePassword(Member member, LoginRequest loginRequest) {
         return passwordEncoder.matches(loginRequest.getPassword(), member.getPassword());
+    }
+
+    public boolean checkMemberIdDuplicate(String memberId) {
+        return memberRepository.existsByMemberId(memberId);
+    }
+
+    public boolean checkNicknameDuplicate(String nickName) {
+        return memberRepository.existsByNickName(nickName);
     }
 
     public List<Member> findMembers() {

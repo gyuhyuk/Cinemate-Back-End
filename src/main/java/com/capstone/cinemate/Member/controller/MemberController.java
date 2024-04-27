@@ -3,15 +3,16 @@ package com.capstone.cinemate.Member.controller;
 import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Member.dto.LoginRequest;
 import com.capstone.cinemate.Member.dto.SignUpRequest;
+import com.capstone.cinemate.Member.dto.SignUpResponse;
+import com.capstone.cinemate.Member.dto.TokenResponse;
 import com.capstone.cinemate.Member.service.MemberService;
 import com.capstone.cinemate.common.exception.CustomException;
+import com.capstone.cinemate.common.response.CustomResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 public class MemberController {
@@ -23,35 +24,36 @@ public class MemberController {
     }
 
     @PostMapping("/api/sign-up")
-    public ResponseEntity<?> signUp(@Valid @RequestBody SignUpRequest signUpRequest, Errors errors) {
-        if (errors.hasErrors()) {
-            // 유효성 검사 실패 시 오류 메시지 반환
-            Map<String, String> validationErrors = new HashMap<>();
-            errors.getFieldErrors().forEach(error ->
-                    validationErrors.put(error.getField(), error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(validationErrors);
-        }
-
-        if (memberService.findByNickName(signUpRequest.getNickName()).isPresent()) {
-            return ResponseEntity.badRequest().body(Collections.singletonMap("message", "이미 존재하는 닉네임입니다."));
-        } else if (memberService.findByMemberId(signUpRequest.getMemberId()).isPresent()) {
-            return ResponseEntity.badRequest().body(Collections.singletonMap("message", "이미 존재하는 id입니다."));
-        }
-        return ResponseEntity.ok(memberService.signUp(signUpRequest));
+    public CustomResponse<SignUpResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
+        return new CustomResponse<>(
+                200,
+                "회원가입에 성공했습니다.",
+                memberService.signUp(signUpRequest)
+        );
     }
+
     @PostMapping("/api/sign-in")
-    public ResponseEntity<?> signIn(@Valid @RequestBody LoginRequest loginRequest, Errors errors) throws CustomException {
-//        if (errors.hasErrors()) {
-//            // 유효성 검사 실패 시 구체적인 오류 메시지를 반환합니다.
-//            List<String> errorMessages = errors.getAllErrors()
-//                    .stream()
-//                    .map(error -> error.getDefaultMessage())
-//                    .collect(Collectors.toList());
-//            return ResponseEntity.badRequest().body(errorMessages); // 오류 메시지 리스트를 포함하여 반환
-//        }
+    public ResponseEntity<TokenResponse> signIn(@Valid @RequestBody LoginRequest loginRequest) throws CustomException {
         return ResponseEntity.ok().body(memberService.signIn(loginRequest));
     }
 
+    @GetMapping("/api/memberId/{memberId}/exists")
+    public CustomResponse<Boolean> checkMemberIdDuplicate(@PathVariable String memberId) {
+        return new CustomResponse<> (
+                200,
+                "null",
+                memberService.checkMemberIdDuplicate(memberId)
+                );
+    }
+
+    @GetMapping("/api/nickname/{nickName}/exists")
+    public CustomResponse<Boolean> checkNicknameDuplicate(@PathVariable String nickName) {
+        return new CustomResponse<> (
+                200,
+                "null",
+                memberService.checkNicknameDuplicate(nickName)
+        );
+    }
 
     @GetMapping("/info")
     public ResponseEntity<List<Member>> findMember() {
