@@ -25,18 +25,8 @@ public class TokenUtils {
                 .setSubject(member.getMemberId())
                 .setHeader(createHeader())
                 .setClaims(createClaims(member))
-                .setExpiration(createExpireDate(1000 * 60 * 5))
+                .setExpiration(createExpireDate(1000 * 60 * 60 * 24))
                 .signWith(SignatureAlgorithm.HS256, createSigningKey(SECRET_KEY))
-                .compact();
-    }
-
-    public String saveRefreshToken(Member member) {
-        return Jwts.builder()
-                .setSubject(member.getMemberId())
-                .setHeader(createHeader())
-                .setClaims(createClaims(member))
-                .setExpiration(createExpireDate(1000 * 60 * 10))
-                .signWith(SignatureAlgorithm.HS256, createSigningKey(REFRESH_KEY))
                 .compact();
     }
 
@@ -45,7 +35,7 @@ public class TokenUtils {
         try {
             Claims accessClaims = getClaimsFormToken(token);
             System.out.println("Access expireTime: " + accessClaims.getExpiration());
-            System.out.println("Access userId: " + accessClaims.get("userId"));
+            System.out.println("Access memberId: " + accessClaims.get("memberId"));
             return true;
         } catch (ExpiredJwtException exception) {
             System.out.println("Token Expired UserID : " + exception.getClaims().getSubject());
@@ -58,24 +48,6 @@ public class TokenUtils {
             return false;
         }
     }
-    public boolean isValidRefreshToken(String token) {
-        try {
-            Claims accessClaims = getClaimsToken(token);
-            System.out.println("Access expireTime: " + accessClaims.getExpiration());
-            System.out.println("Access userId: " + accessClaims.get("userId"));
-            return true;
-        } catch (ExpiredJwtException exception) {
-            System.out.println("Token Expired UserID : " + exception.getClaims().getSubject());
-            return false;
-        } catch (JwtException exception) {
-            System.out.println("Token Tampered");
-            return false;
-        } catch (NullPointerException exception) {
-            System.out.println("Token is null");
-            return false;
-        }
-    }
-
 
     private Date createExpireDate(long expireDate) {
         long curTime = System.currentTimeMillis();
@@ -103,7 +75,7 @@ public class TokenUtils {
         return new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
     }
 
-    private Claims getClaimsFormToken(String token) {
+    public Claims getClaimsFormToken(String token) {
         return Jwts.parser()
                 .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
                 .parseClaimsJws(token)

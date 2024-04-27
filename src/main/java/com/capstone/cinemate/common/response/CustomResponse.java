@@ -11,10 +11,4 @@ public class CustomResponse<T> {
     private final String message;
 
     private final T data;
-
-//    public CustomResponse(int status, String message, T data) {
-//        this.status = status;
-//        this.message = message;
-//        this.data = data;
-//    }
 }

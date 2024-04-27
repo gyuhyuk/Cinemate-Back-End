@@ -9,9 +9,9 @@ import lombok.*;
 @Getter
 @JsonInclude(Include.NON_NULL)
 public class ErrorResponse {
-    private int status;
-    private String code;
-    private String cause;
+    private final int status;
+    private final String code;
+    private final String cause;
     private List<FieldError> validation;
 
 
