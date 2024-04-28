@@ -13,6 +13,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     public void addInterceptors(InterceptorRegistry registry) {
         System.out.println("인터셉터 등록");
-        registry.addInterceptor(jwtTokenInterceptor).addPathPatterns("/info");
+        registry.addInterceptor(jwtTokenInterceptor)
+                .addPathPatterns("/**").excludePathPatterns("/sign-up");
     }
 }
