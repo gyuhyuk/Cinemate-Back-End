@@ -32,7 +32,7 @@ public class Movie {
     private String overview; // 줄거리
 
     // 영화와 리뷰 (영화는 여러개의 리뷰를 가짐)
-    @OrderBy("id")
+    @OrderBy("createdAt DESC")
 //    @OrderBy("likes")
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     @ToString.Exclude

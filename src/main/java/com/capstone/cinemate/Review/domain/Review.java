@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @Table(indexes = {
         @Index(columnList = "movieId")
 })

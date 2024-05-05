@@ -44,4 +44,8 @@ public class Member {
         this.password = password;
         this.nickName = nickName;
     }
+
+    public static Member of(String memberId, String password, String nickName) {
+        return new Member(memberId, password, nickName);
+    }
 }
