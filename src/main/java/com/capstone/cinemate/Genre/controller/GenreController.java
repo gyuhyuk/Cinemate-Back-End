@@ -1,8 +1,13 @@
 package com.capstone.cinemate.Genre.controller;
 
+import com.capstone.cinemate.Genre.domain.Genre;
+import com.capstone.cinemate.Genre.dto.GenreDto;
 import com.capstone.cinemate.Genre.service.GenreService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class GenreController {
@@ -13,6 +18,11 @@ public class GenreController {
         this.genreService = genreService;
     }
 
-//    @GetMapping("/api/survey")
+    @GetMapping("/api/survey")
+    public ResponseEntity<List<GenreDto>> getGenres() {
+        List<GenreDto> genreDtos = genreService.getAllGenre();
+        return ResponseEntity.ok().body(genreDtos);
+    }
+
 
 }

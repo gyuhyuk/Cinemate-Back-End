@@ -14,7 +14,8 @@ public record MemberDto (
     }
 
     public static MemberDto from(Member entity) {
-        return new MemberDto(entity.getId(),
+        return new MemberDto(
+                entity.getId(),
                 entity.getMemberId(),
                 entity.getPassword(),
                 entity.getNickName());
