@@ -18,7 +18,7 @@ public class GenreController {
         this.genreService = genreService;
     }
 
-    @GetMapping("/api/survey")
+    @GetMapping("/api/genres")
     public ResponseEntity<List<GenreDto>> getGenres() {
         List<GenreDto> genreDtos = genreService.getAllGenre();
         return ResponseEntity.ok().body(genreDtos);
