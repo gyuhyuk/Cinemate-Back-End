@@ -28,4 +28,6 @@ public class MovieController {
         CustomResponse<List<MovieDto>> response = new CustomResponse<>(HttpStatus.OK.value(), "Success", movies);
         return ResponseEntity.ok().body(response);
     }
+
+
 }

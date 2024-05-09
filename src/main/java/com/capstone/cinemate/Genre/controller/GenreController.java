@@ -22,8 +22,8 @@ public class GenreController {
 
     @GetMapping("/api/genres")
     public ResponseEntity<CustomResponse<List<GenreDto>>> getGenres() {
-        List<GenreDto> genreDtos = genreService.getAllGenre();
-        CustomResponse<List<GenreDto>> response = new CustomResponse<>(HttpStatus.OK.value(), "Success", genreDtos);
+        List<GenreDto> genres = genreService.getAllGenre();
+        CustomResponse<List<GenreDto>> response = new CustomResponse<>(HttpStatus.OK.value(), "Success", genres);
 
         return ResponseEntity.ok().body(response);
     }
