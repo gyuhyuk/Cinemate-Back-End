@@ -24,7 +24,8 @@ public class SpringSecurity {
                 // token을 사용하는 방식이기 때문에 csrf를 disable
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/api/sign-in", "/api/sign-up", "/api/memberId/**", "/api/nickname/**", "/api/genres").permitAll()
+//                        .requestMatchers("/api/sign-in", "/api/sign-up", "/api/memberId/**", "/api/nickname/**", "/api/genres").permitAll()
+                                .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 // 세션을 사용하지 않기 때문에 STATELESS로 설정

@@ -32,8 +32,6 @@ public class Movie {
     private String posterPath; // 포스터 이미지
     private String overview; // 줄거리
 
-    private Member member;
-
     // 영화와 리뷰 (영화는 여러개의 리뷰를 가짐)
     @OrderBy("createdAt DESC")
 //    @OrderBy("likes")
@@ -42,10 +40,6 @@ public class Movie {
     private final Set<Review> movieReviews = new LinkedHashSet<>();
 
     protected Movie () {}
-
-    public Member getMember() {
-        return this.member;
-    }
 
     private Movie(Long movieId, Double rating, String backdropPath, String originalTitle, String movieTitle, LocalDateTime releaseDate, String posterPath, String overview) {
         this.movieId = movieId;

@@ -23,7 +23,7 @@ public record MovieWithReviewsDto(Long id, MemberDto memberDto, Set<MovieReviewD
     public static MovieWithReviewsDto from(Movie entity) {
         return new MovieWithReviewsDto(
                 entity.getId(),
-                MemberDto.from(entity.getMember()), // MemberDto.from() 메서드를 호출하여 MemberDto 객체 생성
+                null,
                 entity.getMovieReviews().stream().map(MovieReviewDto::from)
                                 .collect(Collectors.toCollection(LinkedHashSet::new)),
                 entity.getMovieId(),
