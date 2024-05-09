@@ -3,6 +3,8 @@ package com.capstone.cinemate.Genre.controller;
 import com.capstone.cinemate.Genre.domain.Genre;
 import com.capstone.cinemate.Genre.dto.GenreDto;
 import com.capstone.cinemate.Genre.service.GenreService;
+import com.capstone.cinemate.common.response.CustomResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,10 +21,10 @@ public class GenreController {
     }
 
     @GetMapping("/api/genres")
-    public ResponseEntity<List<GenreDto>> getGenres() {
+    public ResponseEntity<CustomResponse<List<GenreDto>>> getGenres() {
         List<GenreDto> genreDtos = genreService.getAllGenre();
-        return ResponseEntity.ok().body(genreDtos);
+        CustomResponse<List<GenreDto>> response = new CustomResponse<>(HttpStatus.OK.value(), "Success", genreDtos);
+
+        return ResponseEntity.ok().body(response);
     }
-
-
 }
