@@ -1,42 +1,56 @@
 package com.capstone.cinemate.Movie.service;
 
+import com.capstone.cinemate.Member.domain.Member;
+import com.capstone.cinemate.Member.repository.MemberRepository;
+import com.capstone.cinemate.Movie.domain.MemberMovie;
+import com.capstone.cinemate.Movie.domain.Movie;
 import com.capstone.cinemate.Movie.dto.MovieDto;
+import com.capstone.cinemate.Movie.dto.MovieResponse;
 import com.capstone.cinemate.Movie.dto.MovieWithReviewsDto;
+import com.capstone.cinemate.Movie.dto.MoviesResponse;
+import com.capstone.cinemate.Movie.repository.MemberMovieRepository;
 import com.capstone.cinemate.Movie.repository.MovieRepository;
 import com.capstone.cinemate.common.type.MovieSearchType;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.*;
 
 @Transactional
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MovieService {
     private final MovieRepository movieRepository;
+    private final MemberMovieRepository memberMovieRepository;
+    private final MemberRepository memberRepository;
 
-    // 영화 검색
+
+    // 전체 영화 return
     @Transactional(readOnly = true)
-    public List<MovieDto> searchMovies(MovieSearchType title, String searchKeyword) {
-        if (searchKeyword == null || searchKeyword.isBlank()) {
-            return movieRepository.findAll().stream()
-                    .map(MovieDto::from)
-                    .collect(Collectors.toList());
-        }
-
-        // 영화 제목이 일치할 때
-        if (title == MovieSearchType.TITLE) {
-            return movieRepository.findByMovieTitle(searchKeyword).stream()
-                    .map(MovieDto::from)
-                    .collect(Collectors.toList());
-        }
+    public List<MovieDto> getAllMovies() {
         return movieRepository.findAll().stream()
                 .map(MovieDto::from)
                 .collect(Collectors.toList());
     }
+
+    // 영화 검색
+    @Transactional(readOnly = true)
+    public List<MovieDto> searchMoviesByPartialTitle(MovieSearchType movieSearchType, String searchValue) {
+        if (movieSearchType == MovieSearchType.TITLE) {
+            return movieRepository.findByMovieTitleContaining(searchValue).stream()
+                    .map(MovieDto::from)
+                    .collect(Collectors.toList());
+        } else {
+            // 다른 검색 유형에 대한 처리 추가 가능
+            return Collections.emptyList(); // 다른 검색 유형을 처리하지 않는 경우 빈 리스트 반환
+        }
+    }
+
 
     // 영화 정보 입력 시 리뷰 까지 같이 조회
     @Transactional(readOnly = true)
@@ -44,5 +58,28 @@ public class MovieService {
         return movieRepository.findById(movieId)
                 .map(MovieWithReviewsDto::from)
                 .orElseThrow(() -> new EntityNotFoundException("영화가 없습니다. - movieId: " + movieId));
+    }
+
+    // 멤버가 저장한 영화 보기
+    @Transactional(readOnly = true)
+    public MoviesResponse getMemberMovies(Long memberId) {
+        log.info("member id : " + memberId);
+        List<MovieResponse> movieResponses = memberMovieRepository.findMemberMoviesByMemberId(memberId).stream()
+                .map(MovieResponse::of)
+                .toList();
+        return new MoviesResponse(movieResponses);
+    }
+
+    // 멤버가 영화 저장하기
+    @Transactional
+    public void saveMemberMovie(List<Long> movieIds, Long memberId) {
+        log.info("member id : " + memberId);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(IllegalArgumentException::new);
+        movieIds.forEach(id->{
+            Movie movie = movieRepository.findById(id)
+                    .orElseThrow(IllegalArgumentException::new);
+            memberMovieRepository.save(new MemberMovie(member, movie));
+        });
     }
 }

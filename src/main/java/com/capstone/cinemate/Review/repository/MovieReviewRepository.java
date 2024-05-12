@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface MovieReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByMovie_Id(Long movieId);
+    void deleteByIdAndMember_MemberId(Long reviewId, String MemberId);
 }

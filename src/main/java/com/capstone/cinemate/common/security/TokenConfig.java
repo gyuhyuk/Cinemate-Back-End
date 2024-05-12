@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @RequiredArgsConstructor
-public class WebMvcConfig implements WebMvcConfigurer {
+public class TokenConfig implements WebMvcConfigurer {
     private final JwtTokenInterceptor jwtTokenInterceptor;
 
     public void addInterceptors(InterceptorRegistry registry) {

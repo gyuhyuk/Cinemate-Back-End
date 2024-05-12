@@ -49,14 +49,14 @@ public class Review {
 
     protected Review() {}
 
-    private Review(Movie movie, String content, Double rating) {
+    private Review(Movie movie, String content, Member member) {
         this.movie = movie;
         this.content = content;
-        this.rating = rating;
+        this.member = member;
     }
 
-    public static Review of(Movie movie, String content, Double rating) {
-      return new Review(movie, content, rating);
+    public static Review of(Movie movie, String content, Member member) {
+      return new Review(movie, content, member);
     }
 
     @Override

@@ -18,6 +18,10 @@ public record MovieReviewDto(Long id, Long movieId, String content, Double ratin
         return new MovieReviewDto(id, movieId, content, rating, likes, memberDto, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
+    public static MovieReviewDto of(Long movieId, String content, Double rating, MemberDto memberDto) {
+        return new MovieReviewDto(null, movieId, content, rating, null, memberDto, null, null, null, null);
+    }
+
     public static MovieReviewDto from(Review entity) {
         return new MovieReviewDto(
                 entity.getId(),
@@ -33,11 +37,11 @@ public record MovieReviewDto(Long id, Long movieId, String content, Double ratin
         );
     }
 
-    public Review toEntity(Movie entity) {
+    public Review toEntity(Movie entity, Member member) {
         return Review.of(
                 entity,
                 content,
-                rating
+                member
         );
     }
 }

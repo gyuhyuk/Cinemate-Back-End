@@ -1,6 +1,5 @@
 package com.capstone.cinemate.Movie.domain;
 
-import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Review.domain.Review;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -30,7 +29,7 @@ public class Movie {
     private String movieTitle; // 영화 제목
     private LocalDateTime releaseDate; // 출시일
     private String posterPath; // 포스터 이미지
-    private String overview; // 줄거리
+    @Column(length = 2000) private String overview; // 줄거리
 
     // 영화와 리뷰 (영화는 여러개의 리뷰를 가짐)
     @OrderBy("createdAt DESC")

@@ -24,12 +24,12 @@ public class Member {
     @Column(unique = true) private String nickName;
 
     // 멤버와 장르 (유저는 여러개의 장르를 가짐)
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private final List<GenreMember> members = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     // 멤버와 영화 (유저는 여러개의 영화를 가짐)
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @ToString.Exclude
     private final Set<MemberMovie> memberMovies = new LinkedHashSet<>();
 
