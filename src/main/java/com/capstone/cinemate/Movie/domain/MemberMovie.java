@@ -16,7 +16,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class MemberMovie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "memberMovieId")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -76,7 +76,10 @@ public class MovieService {
         log.info("member id : " + memberId);
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(IllegalArgumentException::new);
-        movieIds.forEach(id->{
+
+        memberMovieRepository.deleteByMemberId(memberId);
+
+        movieIds.stream().limit(3).forEach(id->{
             Movie movie = movieRepository.findById(id)
                     .orElseThrow(IllegalArgumentException::new);
             memberMovieRepository.save(new MemberMovie(member, movie));
