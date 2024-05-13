@@ -1,8 +1,11 @@
 package com.capstone.cinemate.Member.controller.helper;
 
+import com.capstone.cinemate.common.exception.CustomException;
 import com.capstone.cinemate.common.exception.InvalidTokenException;
 
 import java.util.Optional;
+
+import static com.capstone.cinemate.common.exception.ErrorCode.INVALID_TOKEN;
 
 public class TokenExtractor {
 
@@ -15,7 +18,7 @@ public class TokenExtractor {
     public static String extractToken(final Optional<String> authorization)
             throws RuntimeException {
         if (authorization.isEmpty()) {
-            throw new InvalidTokenException();
+            throw new CustomException(INVALID_TOKEN);
         }
 
         String[] splitAuthorization = authorization.get().split(HEADER_DELIMITER);
@@ -27,11 +30,11 @@ public class TokenExtractor {
     private static void validateAuthorization(final String[] splitAuthorization)
             throws RuntimeException {
         if (splitAuthorization.length != VALID_AUTHORIZATION_LENGTH) {
-            throw new InvalidTokenException();
+            throw new CustomException(INVALID_TOKEN);
         }
 
         if (!splitAuthorization[PREFIX_INDEX].equals(PREFIX)) {
-            throw new InvalidTokenException();
+            throw new CustomException(INVALID_TOKEN);
         }
     }
 }
