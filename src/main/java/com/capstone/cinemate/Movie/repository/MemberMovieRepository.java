@@ -20,8 +20,4 @@ public interface MemberMovieRepository extends JpaRepository<MemberMovie, Long> 
     @Transactional
     @Query("DELETE FROM MemberMovie m WHERE m.member.id = :memberId")
     void deleteByMemberId(Long memberId);
-
-//    @Modifying
-//    @Query(value = "insert into member_movie values (movie_id = :moviesId, member_id = :memberId)", nativeQuery = true)
-//    void saveMovies(Long movieId, Long memberId);
 }

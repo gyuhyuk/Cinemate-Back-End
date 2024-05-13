@@ -3,9 +3,7 @@ package com.capstone.cinemate.Review.domain;
 import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Movie.domain.Movie;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -23,6 +21,9 @@ import java.util.Objects;
 })
 @EntityListeners(AuditingEntityListener.class)
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,16 +48,16 @@ public class Review {
     private LocalDateTime modifiedAt; // 수정일시
     @LastModifiedBy @Column(nullable = false, length = 100) private String modifiedBy; // 수정자
 
-    protected Review() {}
 
-    private Review(Movie movie, String content, Member member) {
+    private Review(Movie movie, String content, Member member, double rating) {
         this.movie = movie;
         this.content = content;
         this.member = member;
+        this.rating = rating;
     }
 
-    public static Review of(Movie movie, String content, Member member) {
-      return new Review(movie, content, member);
+    public static Review of(Movie movie, String content, Member member, double rating) {
+      return new Review(movie, content, member, rating);
     }
 
     @Override

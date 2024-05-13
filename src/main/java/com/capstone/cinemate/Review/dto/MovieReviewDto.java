@@ -36,12 +36,4 @@ public record MovieReviewDto(Long id, Long movieId, String content, Double ratin
                 entity.getModifiedBy()
         );
     }
-
-    public Review toEntity(Movie entity, Member member) {
-        return Review.of(
-                entity,
-                content,
-                member
-        );
-    }
 }

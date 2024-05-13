@@ -7,7 +7,10 @@ import com.capstone.cinemate.Movie.dto.MovieWithReviewsDto;
 import com.capstone.cinemate.Movie.repository.MovieRepository;
 import com.capstone.cinemate.Review.domain.Review;
 import com.capstone.cinemate.Review.dto.MovieReviewDto;
+import com.capstone.cinemate.Review.dto.MovieReviewRequest;
 import com.capstone.cinemate.Review.repository.MovieReviewRepository;
+import com.capstone.cinemate.common.exception.CustomException;
+import com.capstone.cinemate.common.exception.ErrorCode;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,13 +34,13 @@ public class MovieReviewService {
     }
 
     // 리뷰 등록
-//    public void saveMovieReview(MovieReviewDto dto) {
-//        Movie movie = movieRepository.findById(dto.movieId())
-//                .orElseThrow(() -> new EntityNotFoundException("영화를 찾을 수 없습니다."));
-////        Member member = memberRepository.getReferenceById(dto.memberDto().memberId());
-//        Review review = dto.toEntity(movie, member);
-//        movieReviewRepository.save(review);
-//    }
+    public void saveMovieReview(MovieReviewRequest movieReviewRequest, Long movieId, Long id) {
+        Member member = memberRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST));
+
+        Review review = Review.of(movie, movieReviewRequest.content(), member, movieReviewRequest.rating());
+        movieReviewRepository.save(review);
+    }
 
     // 리뷰 수정
     public void updateMovieReview(MovieReviewDto dto) {

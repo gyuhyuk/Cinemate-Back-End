@@ -13,21 +13,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class MovieController {
 
     private final MovieService movieService;
 
+    // 전체 영화 조회
     @GetMapping("/api/search-movies")
     public ResponseEntity<CustomResponse<List<MovieDto>>> movies(
             @RequestParam(required = false) MovieSearchType movieSearchType,
             @RequestParam(required = false) String searchValue) {
         List<MovieDto> movies;
-
 
         if(searchValue != null && !searchValue.isBlank()) {
             movies = movieService.searchMoviesByPartialTitle(movieSearchType, searchValue);
