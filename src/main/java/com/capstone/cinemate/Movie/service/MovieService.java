@@ -51,7 +51,6 @@ public class MovieService {
         }
     }
 
-
     // 영화 정보 입력 시 리뷰 까지 같이 조회
     @Transactional(readOnly = true)
     public MovieWithReviewsDto getMovie(Long movieId) {
@@ -63,7 +62,6 @@ public class MovieService {
     // 멤버가 저장한 영화 보기
     @Transactional(readOnly = true)
     public MoviesResponse getMemberMovies(Long memberId) {
-        log.info("member id : " + memberId);
         List<MovieResponse> movieResponses = memberMovieRepository.findMemberMoviesByMemberId(memberId).stream()
                 .map(MovieResponse::of)
                 .toList();
@@ -73,7 +71,6 @@ public class MovieService {
     // 멤버가 영화 저장하기
     @Transactional
     public void saveMemberMovie(List<Long> movieIds, Long memberId) {
-        log.info("member id : " + memberId);
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(IllegalArgumentException::new);
 

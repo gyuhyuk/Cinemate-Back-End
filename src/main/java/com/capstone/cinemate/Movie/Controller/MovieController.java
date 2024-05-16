@@ -1,12 +1,17 @@
 package com.capstone.cinemate.Movie.Controller;
 
 import com.capstone.cinemate.Member.controller.helper.TokenInformation;
+import com.capstone.cinemate.Member.domain.Member;
+import com.capstone.cinemate.Member.repository.MemberRepository;
 import com.capstone.cinemate.Movie.dto.MovieDto;
 import com.capstone.cinemate.Movie.dto.MoviesResponse;
 import com.capstone.cinemate.Movie.service.MovieService;
+import com.capstone.cinemate.common.exception.CustomException;
+import com.capstone.cinemate.common.exception.ErrorCode;
 import com.capstone.cinemate.common.response.CustomResponse;
 import com.capstone.cinemate.common.type.MovieSearchType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,6 +27,7 @@ import java.util.List;
 public class MovieController {
 
     private final MovieService movieService;
+    private final MemberRepository memberRepository;
 
     // 전체 영화 조회
     @GetMapping("/api/search-movies")
@@ -50,6 +56,15 @@ public class MovieController {
     @GetMapping("/api/member-movies")
     public ResponseEntity<CustomResponse<MoviesResponse>> getMemberMovies(@TokenInformation Long memberId) {
         MoviesResponse response = movieService.getMemberMovies(memberId);
+
+
+        if(!response.movies().isEmpty()) {
+            Member member = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+            member.updateSurveyStatus(true);
+            memberRepository.save(member);
+        }
+
         CustomResponse<MoviesResponse> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Success", response);
         return ResponseEntity.ok().body(customResponse);
     }

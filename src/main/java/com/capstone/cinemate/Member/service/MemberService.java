@@ -24,15 +24,7 @@ import java.util.Optional;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final TokenUtils tokenUtils;
-    private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public Optional<Member> findByMemberId(String memberId) {
-        return memberRepository.findByMemberId(memberId);
-    }
-    public Optional<Member> findByNickName(String nickName) {
-        return memberRepository.findByNickName(nickName);
-    }
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) throws CustomException {
@@ -52,11 +44,6 @@ public class MemberService {
                                 .nickName(signUpRequest.getNickName())
                                 .build());
 
-//        String accessToken = tokenUtils.generateJwtToken(member);
-//        String refreshToken = tokenUtils.saveRefreshToken(member);
-//        authRepository.save(
-//                AuthEntity.builder().member(member).refreshToken(refreshToken).build());
-//        return TokenResponse.builder().ACCESS_TOKEN(accessToken).REFRESH_TOKEN(refreshToken).build();
         return new SignUpResponse(member.getMemberId(), member.getNickName());
     }
 
@@ -73,9 +60,7 @@ public class MemberService {
 
             String accessToken = tokenUtils.generateJwtToken(member);
 
-            return TokenResponse.builder()
-                    .accessToken(accessToken)
-                    .build();
+            return new TokenResponse(accessToken, member.getSurvey());
     }
 
     // 비밀번호 확인

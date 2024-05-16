@@ -23,8 +23,8 @@ public enum ErrorCode {
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     MEMBER_NOT_FOUND(404, "NOT_FOUND", "해당 유저 정보를 찾을 수 없습니다."),
     RESOURCE_NOT_FOUND(404, "NOT_FOUND", "해당 정보를 찾을 수 없습니다."),
-    BOARD_NOT_FOUND(404, "NOT_FOUND", "해당 게시물을 찾을 수 없습니다."),
-    COMMENT_NOT_FOUND(404, "NOT_FOUND", "해당 댓글을 찾을 수 없습니다."),
+    MOVIE_NOT_FOUND(404, "NOT_FOUND", "해당 영화를 찾을 수 없습니다."),
+    REVIEW_NOT_FOUND(404, "NOT_FOUND", "해당 리뷰를 찾을 수 없습니다."),
 
     /* 405 METHOD_NOT_ALLOWED : 지원하지 않는 HTTP Method */
     METHOD_NOT_ALLOWED(405, "METHOD_NOT_ALLOWED", "허용되지 않은 요청입니다."),

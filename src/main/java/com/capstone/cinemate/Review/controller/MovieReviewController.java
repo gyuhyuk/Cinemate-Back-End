@@ -2,7 +2,10 @@ package com.capstone.cinemate.Review.controller;
 
 import com.capstone.cinemate.Member.controller.helper.TokenInformation;
 import com.capstone.cinemate.Member.domain.Member;
+import com.capstone.cinemate.Review.domain.Review;
+import com.capstone.cinemate.Review.dto.MovieReviewDto;
 import com.capstone.cinemate.Review.dto.MovieReviewRequest;
+import com.capstone.cinemate.Review.dto.MovieReviewResponse;
 import com.capstone.cinemate.Review.service.MovieReviewService;
 import com.capstone.cinemate.common.response.CustomResponse;
 import jakarta.validation.Valid;
@@ -19,11 +22,18 @@ public class MovieReviewController {
     private final MovieReviewService movieReviewService;
 
     @PostMapping("/api/movie/{movieId}/review")
-    public CustomResponse<Long> postNewReview(@PathVariable("movieId") Long movieId, @RequestBody MovieReviewRequest request, @TokenInformation Long memberId) {
+    public CustomResponse<String> postNewReview(@PathVariable("movieId") Long movieId, @RequestBody MovieReviewRequest request, @TokenInformation Long memberId) {
         log.info("member id : " + memberId);
         movieReviewService.saveMovieReview(request, movieId, memberId);
 
-        return new CustomResponse<>(HttpStatus.CREATED.value(), "리뷰가 등록되었습니다.", memberId);
+        return new CustomResponse<>(HttpStatus.CREATED.value(), "리뷰가 등록되었습니다.", request.content());
+    }
+
+    @PutMapping("api/movie/{movieId}/review/{reviewId}")
+    public CustomResponse<String> updateReview(@PathVariable("movieId") Long movieId, @PathVariable("reviewId") Long reviewId, @RequestBody MovieReviewRequest request, @TokenInformation Long memberId) {
+        movieReviewService.updateMovieReview(request, movieId, reviewId, memberId);
+
+        return new CustomResponse<>(HttpStatus.CREATED.value(), "리뷰가 수정되었습니다.", request.content());
     }
 
 //    @DeleteMapping("/api/movie/{movieId}/review/{reviewId}")

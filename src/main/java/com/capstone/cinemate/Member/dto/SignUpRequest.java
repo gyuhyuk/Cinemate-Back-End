@@ -1,6 +1,5 @@
 package com.capstone.cinemate.Member.dto;
 
-import com.capstone.cinemate.Member.domain.Member;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;

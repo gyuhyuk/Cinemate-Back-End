@@ -2,6 +2,7 @@ package com.capstone.cinemate.Review.domain;
 
 import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Movie.domain.Movie;
+import com.capstone.cinemate.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
@@ -19,12 +20,11 @@ import java.util.Objects;
 @Table(indexes = {
         @Index(columnList = "movieId")
 })
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Review {
+public class Review extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // PK
@@ -38,14 +38,14 @@ public class Review {
     @Setter @ManyToOne(optional = false) private Member member; // 멤버 (ID)
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt; // 작성일시
+//    @CreatedDate
+//    @Column(nullable = false, updatable = false)
+//    private LocalDateTime createdAt; // 작성일시
 
     @CreatedBy @Column(nullable = false, length = 100) private String createdBy; // 작성자
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @LastModifiedDate @Column(nullable = false)
-    private LocalDateTime modifiedAt; // 수정일시
+//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @LastModifiedDate @Column(nullable = false)
+//    private LocalDateTime modifiedAt; // 수정일시
     @LastModifiedBy @Column(nullable = false, length = 100) private String modifiedBy; // 수정자
 
 
@@ -58,6 +58,13 @@ public class Review {
 
     public static Review of(Movie movie, String content, Member member, double rating) {
       return new Review(movie, content, member, rating);
+    }
+
+    public void update(Movie movie, String content, Double rating, Member member) {
+        this.movie = movie;
+        this.member = member;
+        this.content = content;
+        this.rating = rating;
     }
 
     @Override

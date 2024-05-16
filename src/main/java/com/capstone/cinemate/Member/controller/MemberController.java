@@ -9,6 +9,7 @@ import com.capstone.cinemate.Member.service.MemberService;
 import com.capstone.cinemate.common.exception.CustomException;
 import com.capstone.cinemate.common.response.CustomResponse;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,8 +34,10 @@ public class MemberController {
     }
 
     @PostMapping("/api/sign-in")
-    public ResponseEntity<TokenResponse> signIn(@Valid @RequestBody LoginRequest loginRequest) throws CustomException {
-        return ResponseEntity.ok().body(memberService.signIn(loginRequest));
+    public CustomResponse<TokenResponse> signIn(@Valid @RequestBody LoginRequest loginRequest) throws CustomException {
+        return new CustomResponse<>(
+                HttpStatus.OK.value(), "로그인에 성공했습니다.", memberService.signIn(loginRequest)
+        );
     }
 
     @GetMapping("/api/memberId/{memberId}/exists")

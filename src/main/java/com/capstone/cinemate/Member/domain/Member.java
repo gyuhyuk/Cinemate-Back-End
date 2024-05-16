@@ -3,15 +3,20 @@ package com.capstone.cinemate.Member.domain;
 import com.capstone.cinemate.Genre.domain.GenreMember;
 import com.capstone.cinemate.Movie.domain.MemberMovie;
 import com.capstone.cinemate.Review.domain.Review;
+import com.capstone.cinemate.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.*;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +28,12 @@ public class Member {
 
     @Column(unique = true) private String nickName;
 
+    @Setter @Builder.Default private Boolean survey = false;
+
     // 멤버와 장르 (유저는 여러개의 장르를 가짐)
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private final List<GenreMember> members = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     // 멤버와 영화 (유저는 여러개의 영화를 가짐)
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @ToString.Exclude
@@ -39,13 +45,18 @@ public class Member {
     private final Set<Review> memberReviews = new LinkedHashSet<>();
 
     @Builder
-    public Member(String memberId, String password, String nickName) {
+    public Member(String memberId, String password, String nickName, Boolean survey) {
         this.memberId = memberId;
         this.password = password;
         this.nickName = nickName;
+        this.survey = survey;
     }
 
-    public static Member of(String memberId, String password, String nickName) {
-        return new Member(memberId, password, nickName);
+    public static Member of(String memberId, String password, String nickName, Boolean survey) {
+        return new Member(memberId, password, nickName, survey);
+    }
+
+    public void updateSurveyStatus(boolean status) {
+        this.survey = status;
     }
 }
