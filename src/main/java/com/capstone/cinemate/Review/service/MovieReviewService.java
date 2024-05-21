@@ -36,7 +36,7 @@ public class MovieReviewService {
 
     // 리뷰 별점 등록 및 수정
     @Transactional
-    public MovieReviewDto createOrUpdateMovieRating(MovieReviewRatingRequest movieReviewRatingRequest, Long movieId, Long reviewId, Long memberId) {
+    public MovieReviewDto createOrUpdateMovieRating(MovieReviewRatingRequest movieReviewRatingRequest, Long movieId, Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 

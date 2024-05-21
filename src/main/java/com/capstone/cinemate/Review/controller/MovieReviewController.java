@@ -20,9 +20,9 @@ public class MovieReviewController {
     private final MovieReviewService movieReviewService;
 
     // 리뷰 별점 등록 및 수정
-    @PutMapping("/api/movie/{movieId}/review/{reviewId}/rating")
-    public CustomResponse<MovieReviewResponse> postNewRating(@PathVariable("movieId") Long movieId, @RequestBody MovieReviewRatingRequest request, @PathVariable("reviewId") Long reviewId, @TokenInformation Long memberId) {
-        MovieReviewDto movieReviewDto = movieReviewService.createOrUpdateMovieRating(request, movieId, reviewId, memberId);
+    @PutMapping("/api/movie/{movieId}/review/rating")
+    public CustomResponse<MovieReviewResponse> postNewRating(@PathVariable("movieId") Long movieId, @RequestBody MovieReviewRatingRequest request, @TokenInformation Long memberId) {
+        MovieReviewDto movieReviewDto = movieReviewService.createOrUpdateMovieRating(request, movieId, memberId);
         if (movieReviewDto == null) {
             // 리뷰가 삭제된 경우
             return new CustomResponse<>(HttpStatus.NO_CONTENT.value(), "별점이 삭제되었습니다.", null);
