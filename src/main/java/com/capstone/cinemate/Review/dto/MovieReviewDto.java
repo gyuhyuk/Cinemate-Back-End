@@ -12,14 +12,17 @@ import java.time.LocalDateTime;
  */
 public record MovieReviewDto(Long id, Long movieId, String content, Double rating,
                              Long likes, MemberDto memberDto, LocalDateTime createdAt,
-                             String createdBy, LocalDateTime modifiedAt,
-                             String modifiedBy) {
-    public static MovieReviewDto of(Long id, Long movieId, String content, Double rating, Long likes, MemberDto memberDto, LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
-        return new MovieReviewDto(id, movieId, content, rating, likes, memberDto, createdAt, createdBy, modifiedAt, modifiedBy);
+                             LocalDateTime modifiedAt) {
+    public static MovieReviewDto of(Long id, Long movieId, String content, Double rating, Long likes, MemberDto memberDto, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+        return new MovieReviewDto(id, movieId, content, rating, likes, memberDto, createdAt, modifiedAt);
     }
 
     public static MovieReviewDto of(Long movieId, String content, Double rating, MemberDto memberDto) {
-        return new MovieReviewDto(null, movieId, content, rating, null, memberDto, null, null, null, null);
+        return new MovieReviewDto(null, movieId, content, rating, null, memberDto, null, null);
+    }
+
+    public static MovieReviewDto of(Long movieId, Double rating, MemberDto memberDto) {
+        return new MovieReviewDto(null, movieId, null, rating, null, memberDto, null, null);
     }
 
     public static MovieReviewDto from(Review entity) {
@@ -31,9 +34,7 @@ public record MovieReviewDto(Long id, Long movieId, String content, Double ratin
                 entity.getLikes(),
                 MemberDto.from(entity.getMember()),
                 entity.getCreatedAt(),
-                entity.getCreatedBy(),
-                entity.getModifiedAt(),
-                entity.getModifiedBy()
+                entity.getModifiedAt()
         );
     }
 }

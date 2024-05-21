@@ -30,40 +30,42 @@ public class Review extends BaseEntity {
     private Long id; // PK
 
     @Setter @ManyToOne(optional = false) private Movie movie; // 영화 (ID)
-    @Setter @Column(nullable = false, length = 2000) private String content; // 리뷰 내용
+    @Setter @Column(length = 2000) private String content; // 리뷰 내용
     @Setter @Column(nullable = false) private Double rating; // 평점
 
     private Long likes = 0L; // 좋아요 수
 
     @Setter @ManyToOne(optional = false) private Member member; // 멤버 (ID)
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-//    @CreatedDate
-//    @Column(nullable = false, updatable = false)
-//    private LocalDateTime createdAt; // 작성일시
-
-    @CreatedBy @Column(nullable = false, length = 100) private String createdBy; // 작성자
-
-//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @LastModifiedDate @Column(nullable = false)
-//    private LocalDateTime modifiedAt; // 수정일시
-    @LastModifiedBy @Column(nullable = false, length = 100) private String modifiedBy; // 수정자
-
-
-    private Review(Movie movie, String content, Member member, double rating) {
+    public Review(Movie movie, String content, Member member, Double rating) {
         this.movie = movie;
         this.content = content;
         this.member = member;
         this.rating = rating;
     }
 
-    public static Review of(Movie movie, String content, Member member, double rating) {
+
+    public static Review of(Movie movie, String content, Member member, Double rating) {
       return new Review(movie, content, member, rating);
     }
 
-    public void update(Movie movie, String content, Double rating, Member member) {
+    public static Review of(Movie movie, Member member, Double rating) {
+        return new Review(movie, "", member, rating);
+    }
+
+    public Review(Movie movie, Member member, Double rating) {
+        this(movie, "", member, rating);
+    }
+
+    public void contentUpdate(Movie movie, String content, Member member) {
         this.movie = movie;
         this.member = member;
         this.content = content;
+    }
+
+    public void ratingUpdate(Movie movie, Double rating, Member member) {
+        this.movie = movie;
+        this.member = member;
         this.rating = rating;
     }
 
@@ -77,5 +79,9 @@ public class Review extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public void increaseLikes() {
+        likes++;
     }
 }

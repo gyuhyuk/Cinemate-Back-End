@@ -10,6 +10,8 @@ import com.capstone.cinemate.Movie.dto.MovieWithReviewsDto;
 import com.capstone.cinemate.Movie.dto.MoviesResponse;
 import com.capstone.cinemate.Movie.repository.MemberMovieRepository;
 import com.capstone.cinemate.Movie.repository.MovieRepository;
+import com.capstone.cinemate.common.exception.CustomException;
+import com.capstone.cinemate.common.exception.ErrorCode;
 import com.capstone.cinemate.common.type.MovieSearchType;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -76,10 +78,18 @@ public class MovieService {
 
         memberMovieRepository.deleteByMemberId(memberId);
 
+
+        if (movieIds.size() > 3) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
         movieIds.stream().limit(3).forEach(id->{
             Movie movie = movieRepository.findById(id)
                     .orElseThrow(IllegalArgumentException::new);
             memberMovieRepository.save(new MemberMovie(member, movie));
         });
+
+        // 설문조사 완료하면 true로 변경
+        member.updateSurveyStatus(true);
+        memberRepository.save(member);
     }
 }

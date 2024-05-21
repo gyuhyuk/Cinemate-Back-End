@@ -57,14 +57,6 @@ public class MovieController {
     public ResponseEntity<CustomResponse<MoviesResponse>> getMemberMovies(@TokenInformation Long memberId) {
         MoviesResponse response = movieService.getMemberMovies(memberId);
 
-
-        if(!response.movies().isEmpty()) {
-            Member member = memberRepository.findById(memberId)
-                    .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-            member.updateSurveyStatus(true);
-            memberRepository.save(member);
-        }
-
         CustomResponse<MoviesResponse> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Success", response);
         return ResponseEntity.ok().body(customResponse);
     }
