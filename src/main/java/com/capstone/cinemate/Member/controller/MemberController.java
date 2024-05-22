@@ -1,6 +1,5 @@
 package com.capstone.cinemate.Member.controller;
 
-import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Member.dto.LoginRequest;
 import com.capstone.cinemate.Member.dto.SignUpRequest;
 import com.capstone.cinemate.Member.dto.SignUpResponse;
@@ -10,10 +9,7 @@ import com.capstone.cinemate.common.exception.CustomException;
 import com.capstone.cinemate.common.response.CustomResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
 
 @RestController
 public class MemberController {
@@ -58,8 +54,8 @@ public class MemberController {
         );
     }
 
-    @GetMapping("/info")
-    public ResponseEntity<List<Member>> findMember() {
-        return ResponseEntity.ok().body(memberService.findMembers());
-    }
+//    @GetMapping("/api/recommendation")
+//    public ResponseEntity<List<Member>> findMember() {
+//        return ResponseEntity.ok().body(memberService.findMembers());
+//    }
 }

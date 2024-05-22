@@ -33,7 +33,6 @@ public class Movie {
 
     // 영화와 리뷰 (영화는 여러개의 리뷰를 가짐)
     @OrderBy("createdAt DESC")
-//    @OrderBy("likes")
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     @ToString.Exclude
     private final Set<Review> movieReviews = new LinkedHashSet<>();

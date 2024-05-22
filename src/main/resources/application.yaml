@@ -7,6 +7,9 @@ logging:
     org.springframework.web.servlet: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
 
+ml_server:
+  url: "http://52.78.232.193:8000"
+
 server:
   servlet:
     encoding:

@@ -88,7 +88,6 @@ public class MovieReviewService {
             throw new CustomException(ErrorCode.REVIEW_ALREADY_EXISTS);
         }
     }
-
     // 리뷰 내용 수정
     @Transactional
     public MovieReviewDto updateMovieContent(MovieReviewContentRequest movieReviewRequest, Long movieId, Long memberId) {

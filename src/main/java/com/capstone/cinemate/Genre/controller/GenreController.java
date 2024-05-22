@@ -1,6 +1,5 @@
 package com.capstone.cinemate.Genre.controller;
 
-import com.capstone.cinemate.Genre.domain.Genre;
 import com.capstone.cinemate.Genre.dto.GenreDto;
 import com.capstone.cinemate.Genre.service.GenreService;
 import com.capstone.cinemate.common.response.CustomResponse;
