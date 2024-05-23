@@ -38,7 +38,7 @@ public class MemberController {
         );
     }
 
-    @GetMapping("/api/memberId/{memberId}/exists")
+    @GetMapping("/api/email/{memberId}/exists")
     public CustomResponse<Boolean> checkMemberIdDuplicate(@PathVariable String memberId) {
         return new CustomResponse<> (
                 200,
