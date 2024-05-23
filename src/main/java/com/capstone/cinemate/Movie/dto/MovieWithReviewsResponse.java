@@ -17,7 +17,7 @@ public record MovieWithReviewsResponse(Long id, Long movieId,
     public static MovieWithReviewsResponse from(MovieWithReviewsDto dto) {
         String nickname = dto.memberDto().nickName();
         if(nickname == null || nickname.isBlank()) {
-            nickname = dto.memberDto().memberId();
+            nickname = dto.memberDto().email();
         }
 
         return new MovieWithReviewsResponse(

@@ -44,13 +44,13 @@ public class MemberService {
         if (memberRepository.findByNickName(signUpRequest.getNickName()).isPresent()) {
             throw new CustomException(ErrorCode.DUPLICATE_NICKNAME_RESOURCE);
         }
-        if (memberRepository.findByMemberId(signUpRequest.getMemberId()).isPresent()) {
+        if (memberRepository.findByMemberId(signUpRequest.getEmail()).isPresent()) {
             throw new CustomException(ErrorCode.DUPLICATE_EMAIL_RESOURCE);
         }
         Member member = memberRepository.save(
                 Member.builder()
                         .password(passwordEncoder.encode(signUpRequest.getPassword()))
-                        .memberId(signUpRequest.getMemberId())
+                        .memberId(signUpRequest.getEmail())
                         .nickName(signUpRequest.getNickName())
                         .build());
 
@@ -60,7 +60,7 @@ public class MemberService {
     @Transactional
     public TokenResponse signIn(LoginRequest loginRequest) throws CustomException {
         Member member = memberRepository
-                .findByMemberId(loginRequest.getMemberId())
+                .findByMemberId(loginRequest.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         if (!hasSamePassword(member, loginRequest)) {

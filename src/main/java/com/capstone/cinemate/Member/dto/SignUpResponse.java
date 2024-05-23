@@ -6,11 +6,11 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SignUpResponse {
-    private String memberId;
+    private String email;
     private String nickName;
 
     public SignUpResponse(String memberId, String nickName) {
-        this.memberId = memberId;
+        this.email = memberId;
         this.nickName = nickName;
     }
 }

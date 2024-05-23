@@ -22,7 +22,7 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @PostMapping("/api/sign-up")
+    @PostMapping("/api/auth/sign-up")
     public CustomResponse<SignUpResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         return new CustomResponse<>(
                 200,
@@ -31,7 +31,7 @@ public class MemberController {
         );
     }
 
-    @PostMapping("/api/sign-in")
+    @PostMapping("/api/auth/sign-in")
     public CustomResponse<TokenResponse> signIn(@Valid @RequestBody LoginRequest loginRequest) throws CustomException {
         return new CustomResponse<>(
                 HttpStatus.OK.value(), "로그인에 성공했습니다.", memberService.signIn(loginRequest)
