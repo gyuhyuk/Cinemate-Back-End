@@ -5,6 +5,7 @@ import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Member.dto.*;
 import com.capstone.cinemate.Member.repository.MemberRepository;
 import com.capstone.cinemate.Movie.domain.Movie;
+import com.capstone.cinemate.Movie.dto.MovieResponse;
 import com.capstone.cinemate.Movie.repository.MovieRepository;
 import com.capstone.cinemate.common.exception.CustomException;
 import com.capstone.cinemate.common.exception.ErrorCode;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-    @Value("${ml_server.url}")
+    @Value("${global.ml_server.url}")
     private String ML_SERVER_URL;
     private final MemberRepository memberRepository;
     private final TokenUtils tokenUtils;
@@ -104,7 +105,30 @@ public class MemberService {
         List<Long> genreIdList = genreMemberRepository.findGenreIdsByMemberId(memberId);
 
         // 장르별 영화가 묶인 리스트의 전체 리스트
-        List<List<Movie>> genreMovieLists = new ArrayList<>();
+        return getRecommendationResponse(memberId, genreIdList, defaultRecommendIdResult);
+    }
+
+
+    public RecommendationResponse recommend(Long memberId) {
+        // 기본 추천
+        CustomResponse<List<Long>> defaultRecommendResponse = recommendRequest(memberId);
+//        for (Long id : defaultRecommendResponse.getData()) {
+//            System.out.print("id = " + id + ", ");
+//        }
+
+        List<Long> defaultRecommendIdResult = defaultRecommendResponse.getData();
+
+        // 멤버의 장르 ID 리스트를 가져옴
+        List<Long> genreIdList = genreMemberRepository.findGenreIdsByMemberId(memberId).stream()
+                .map(id -> ((Number) id).longValue())
+                .toList();
+
+        // 장르별 영화가 묶인 리스트의 전체 리스트
+        return getRecommendationResponse(memberId, genreIdList, defaultRecommendIdResult);
+    }
+
+    private RecommendationResponse getRecommendationResponse(Long memberId, List<Long> genreIdList, List<Long> defaultRecommendIdResult) {
+        List<List<MovieResponse>> genreMovieLists = new ArrayList<>();
 
         for (Long id : genreIdList) {
             List<Long> genreMovieIdList = fetchGenreRecommendations(memberId, id);
@@ -112,44 +136,7 @@ public class MemberService {
         }
 
         // 영화 ID 리스트를 영화 상세 정보로 변환
-        List<Movie> defaultRecommendResult = movieRepository.findAllByIdIn(defaultRecommendIdResult);
-
-        // 결과 반환
-        RecommendationResponse response = new RecommendationResponse();
-        response.setDefaultRecommendResult(defaultRecommendResult);
-        response.setGenreMovieLists(genreMovieLists);
-
-        return response;
-    }
-
-
-    public RecommendationResponse recommend(Long memberId) {
-        // 기본 추천
-        CustomResponse<List<Long>> defaultRecommendResponse = recommendRequest(memberId);
-        List<Long> defaultRecommendIdResult = defaultRecommendResponse.getData();
-
-        for (int i = 0; i < defaultRecommendIdResult.size(); i++) {
-            defaultRecommendIdResult.set(i, defaultRecommendIdResult.get(i));
-        }
-
-        // 멤버의 장르 ID 리스트를 가져옴
-        List<Long> genreIdList = genreMemberRepository.findGenreIdsByMemberId(memberId).stream()
-                .map(id -> ((Number) id).longValue())
-                .toList();
-
-
-
-        // 장르별 영화가 묶인 리스트의 전체 리스트
-        List<List<Movie>> genreMovieLists = new ArrayList<>();
-
-
-        for (Long genreId : genreIdList) {
-            List<Long> genreMovieIdList = fetchGenreRecommendations(memberId, genreId);
-            genreMovieLists.add(movieRepository.findAllByIdIn(genreMovieIdList));
-        }
-
-        // 영화 ID 리스트를 영화 상세 정보로 변환
-        List<Movie> defaultRecommendResult = movieRepository.findAllByIdIn(defaultRecommendIdResult);
+        List<MovieResponse> defaultRecommendResult = movieRepository.findAllByIdIn(defaultRecommendIdResult);
 
         // 결과 반환
         RecommendationResponse response = new RecommendationResponse();
@@ -162,14 +149,11 @@ public class MemberService {
     // 추천하는 장르 fetch
     private List<Long> fetchGenreRecommendations(Long memberId, Long genreId) {
         CustomResponse<List<Long>> genreMovieIdResponse = recommendRequest(memberId, genreId);
-        List<Long> genreMovieIdList = genreMovieIdResponse.getData();
-        for (int i = 0; i < genreMovieIdList.size(); i++) {
-            genreMovieIdList.set(i, genreMovieIdList.get(i));
-        }
-        return genreMovieIdList;
+
+        return genreMovieIdResponse.getData();
     }
 
-    public CustomResponse recommendRequest(Long memberId) {
+    public CustomResponse<List<Long>> recommendRequest(Long memberId) {
         // query parameter 방식 사용
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(ML_SERVER_URL+"/recommendation")
                 .queryParam("userId", memberId)
@@ -189,7 +173,7 @@ public class MemberService {
         return restTemplate.getForObject(uriComponents.toUriString(), CustomResponse.class);
     }
 
-    public CustomResponse recommendRequest(Long memberId, Long genreId) {
+    public CustomResponse<List<Long>> recommendRequest(Long memberId, Long genreId) {
         // query parameter 방식 사용
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(ML_SERVER_URL+"/recommendation")
                 .queryParam("userId", memberId)

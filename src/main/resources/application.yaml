@@ -7,8 +7,11 @@ logging:
     org.springframework.web.servlet: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
 
-ml_server:
-  url: "http://52.78.232.193:8000"
+global:
+  ml_server:
+    url: "http://52.78.232.193:8000"
+  tmdb:
+    access_token: "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2NTE2ZjcyMGI3YjI2ZjgxNjI2OGJiMWRjM2JhNWEzMyIsInN1YiI6IjY0NjMxYjU5MGYzNjU1MDEzNmE1NGZkYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.uK1Adl-8hdsZYerVhH0mZEo84et4fidcPge21enjDJ8"
 
 server:
   servlet:

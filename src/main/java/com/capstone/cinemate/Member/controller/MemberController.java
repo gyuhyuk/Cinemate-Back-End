@@ -57,8 +57,7 @@ public class MemberController {
     }
 
     @GetMapping("/api/recommendation")
-    public ResponseEntity<RecommendationResponse> getMovieRecommendation(@TokenInformation @RequestParam("userId") Long memberId,
-                                                                         @RequestParam(value = "genreId", required = false) Long genreId) {
-        return ResponseEntity.ok().body(memberService.recommend(memberId, genreId));
+    public ResponseEntity<RecommendationResponse> getMovieRecommendation(@TokenInformation @RequestParam("userId") Long memberId) {
+        return ResponseEntity.ok().body(memberService.recommend(memberId));
     }
 }

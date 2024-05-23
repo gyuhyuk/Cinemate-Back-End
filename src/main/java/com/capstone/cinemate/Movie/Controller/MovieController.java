@@ -1,6 +1,7 @@
 package com.capstone.cinemate.Movie.Controller;
 
 import com.capstone.cinemate.Member.controller.helper.TokenInformation;
+import com.capstone.cinemate.Movie.dto.MovieDetailDto;
 import com.capstone.cinemate.Movie.dto.MovieDto;
 import com.capstone.cinemate.Movie.dto.MoviesResponse;
 import com.capstone.cinemate.Movie.service.MovieService;
@@ -9,11 +10,9 @@ import com.capstone.cinemate.common.type.MovieSearchType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -58,6 +57,14 @@ public class MovieController {
 
         CustomResponse<Map<String, List<Long>>> response = new CustomResponse<>(HttpStatus.OK.value(), "Success", result);
         return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/api/movie/detail/{movieId}")
+    public ResponseEntity<CustomResponse<MovieDetailDto>> getMovieDetail(@TokenInformation Long memberId, @PathVariable Long movieId) throws IOException, InterruptedException {
+        MovieDetailDto response = movieService.getMovieDetails(movieId);
+
+        CustomResponse<MovieDetailDto> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Succeess", response);
+        return ResponseEntity.ok().body(customResponse);
     }
 
     //    @GetMapping("/api/detail/{movieId}")

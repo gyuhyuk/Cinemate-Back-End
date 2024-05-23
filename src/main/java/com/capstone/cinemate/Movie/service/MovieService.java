@@ -8,16 +8,14 @@ import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Member.repository.MemberRepository;
 import com.capstone.cinemate.Movie.domain.MemberMovie;
 import com.capstone.cinemate.Movie.domain.Movie;
-import com.capstone.cinemate.Movie.dto.MovieDto;
-import com.capstone.cinemate.Movie.dto.MovieResponse;
-import com.capstone.cinemate.Movie.dto.MovieWithReviewsDto;
-import com.capstone.cinemate.Movie.dto.MoviesResponse;
+import com.capstone.cinemate.Movie.dto.*;
 import com.capstone.cinemate.Movie.repository.MemberMovieRepository;
 import com.capstone.cinemate.Movie.repository.MovieRepository;
 import com.capstone.cinemate.common.exception.CustomException;
 import com.capstone.cinemate.common.exception.ErrorCode;
 import com.capstone.cinemate.common.response.CustomResponse;
 import com.capstone.cinemate.common.type.MovieSearchType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +29,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
+import java.net.http.HttpRequest;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.*;
@@ -40,9 +43,11 @@ import java.util.stream.*;
 @RequiredArgsConstructor
 @Slf4j
 public class MovieService {
-    private final GenreRepository genreRepository;
-    @Value("${ml_server.url}")
+    @Value("${global.ml_server.url}")
     private String ML_SERVER_URL;
+    @Value("${global.tmdb.access_token}")
+    private String TMDB_ACCESS_TOKEN;
+    private final GenreRepository genreRepository;
     private final MovieRepository movieRepository;
     private final MemberMovieRepository memberMovieRepository;
     private final GenreMemberRepository genreMemberRepository;
@@ -94,6 +99,7 @@ public class MovieService {
                 .orElseThrow(IllegalArgumentException::new);
 
         memberMovieRepository.deleteByMemberId(memberId);
+        genreMemberRepository.deleteByMemberId(memberId);
 
 
         if (movieIds.size() > 3) {
@@ -147,4 +153,48 @@ public class MovieService {
         return responseEntity.getBody();
     }
 
+    // 영화 상세 정보 보기
+    @Transactional(readOnly = true)
+    public MovieDetailDto getMovieDetails(Long movieId) throws IOException, InterruptedException {
+        MovieDto movieInfo = movieRepository.findById(movieId)
+                .map(MovieDto::from)
+                .orElseThrow(() -> new EntityNotFoundException("영화가 없습니다. - movieId: " + movieId));
+        // TMDB
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.themoviedb.org/3/movie/" + movieInfo.movieId() + "/credits?language=ko-KR"))
+                .header("accept", "application/json")
+                .header("Authorization", "Bearer " + TMDB_ACCESS_TOKEN)
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        // JSON 파싱을 위한 ObjectMapper 생성
+        ObjectMapper objectMapper = new ObjectMapper();
+        Credit credit = objectMapper.readValue(response.body(), Credit.class);
+
+        // crew의 posterPath에 https://image.tmdb.org/t/p/original를 추가하여 바로 이미지 접근이 가능한 url로 변경
+        List<Cast> castList = credit.cast();
+        List<Crew> crewList = credit.crew();
+        for (Cast cast : castList) {
+            String originalPosterPath = cast.getProfile_path();
+            if (originalPosterPath == null)
+                continue;
+            String newPosterPath = "https://image.tmdb.org/t/p/original" + originalPosterPath;
+            cast.setProfile_path(newPosterPath);
+        }
+        for (Crew crew : crewList) {
+            String originalPosterPath = crew.getProfile_path();
+            if (originalPosterPath == null)
+                continue;
+            String newPosterPath = "https://image.tmdb.org/t/p/original" + originalPosterPath;
+            crew.setProfile_path(newPosterPath);
+        }
+
+        return new MovieDetailDto(movieInfo, credit);
+    }
+
+    // 영화 상세 정보 + 리뷰 까지 같이 보기
+//    @Transactional(readOnly = true)
+//    public MovieWithReviewsDto getMovieDetailWithReviews(Long movieId) {
+//
+//    }
 }
