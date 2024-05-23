@@ -1,15 +1,17 @@
 package com.capstone.cinemate.Member.controller;
 
-import com.capstone.cinemate.Member.dto.LoginRequest;
-import com.capstone.cinemate.Member.dto.SignUpRequest;
-import com.capstone.cinemate.Member.dto.SignUpResponse;
-import com.capstone.cinemate.Member.dto.TokenResponse;
+import com.capstone.cinemate.Member.controller.helper.TokenInformation;
+import com.capstone.cinemate.Member.dto.*;
 import com.capstone.cinemate.Member.service.MemberService;
+import com.capstone.cinemate.Movie.domain.Movie;
 import com.capstone.cinemate.common.exception.CustomException;
 import com.capstone.cinemate.common.response.CustomResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class MemberController {
@@ -54,8 +56,9 @@ public class MemberController {
         );
     }
 
-//    @GetMapping("/api/recommendation")
-//    public ResponseEntity<List<Member>> findMember() {
-//        return ResponseEntity.ok().body(memberService.findMembers());
-//    }
+    @GetMapping("/api/recommendation")
+    public ResponseEntity<RecommendationResponse> getMovieRecommendation(@TokenInformation @RequestParam("userId") Long memberId,
+                                                                         @RequestParam(value = "genreId", required = false) Long genreId) {
+        return ResponseEntity.ok().body(memberService.recommend(memberId, genreId));
+    }
 }
