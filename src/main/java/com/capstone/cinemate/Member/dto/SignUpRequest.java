@@ -12,7 +12,7 @@ public class SignUpRequest {
     private String email;
 
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
-    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,14}", message = "비밀번호는 8~14자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{6,14}", message = "비밀번호는 6~14자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
     private String password;
 
     @NotBlank(message = "닉네임은 필수 입력 값입니다.")
