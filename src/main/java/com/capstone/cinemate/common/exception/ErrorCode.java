@@ -8,6 +8,7 @@ public enum ErrorCode {
     /* 400 BAD_REQUEST : 잘못된 요청 */
     INVALID_INPUT_VALUE(400, "BAD_REQUEST", "입력값이 올바르지 않습니다."),
     BAD_REQUEST(400, "BAD_REQUEST", "잘못된 요청입니다."),
+    SELF_LIKE_NOT_ALLOWED(400, "BAD_REQUEST", "자신의 댓글에는 좋아요를 요청할 수 없습니다."),
     WRONG_PASSWORD(400, "BAD_REQUEST", "잘못된 비밀번호입니다."),
     INVALID_QUERY(400, "BAD_REQUEST", "인코딩에 실패했습니다."),
 
@@ -35,8 +36,7 @@ public enum ErrorCode {
     REVIEW_ALREADY_EXISTS(409, "CONFLICT", "리뷰가 이미 존재합니다."),
 
     /* 500 INTERNAL_SERVER_ERROR */
-    SERVER_ERROR(500, "INTERNAL_SERVER_ERROR", "예기치 못한 오류가 발생하였습니다."),
-    IMAGE_UPLOAD_FAIL(500, "IMAGE_UPLOAD_FAIL", "이미지 업로드에 실패했습니다.");
+    SERVER_ERROR(500, "INTERNAL_SERVER_ERROR", "예기치 못한 오류가 발생하였습니다.");
 
     private final int status;
     private final String code;

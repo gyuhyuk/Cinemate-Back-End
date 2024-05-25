@@ -1,5 +1,6 @@
 package com.capstone.cinemate.Review.domain;
 
+import com.capstone.cinemate.Heart.domain.ReviewHeart;
 import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Movie.domain.Movie;
 import com.capstone.cinemate.common.entity.BaseEntity;
@@ -13,6 +14,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -33,9 +36,13 @@ public class Review extends BaseEntity {
     @Setter @Column(length = 2000) private String content; // 리뷰 내용
     @Setter @Column(nullable = false) private Double rating; // 평점
 
-    private Long likes = 0L; // 좋아요 수
+    @Setter private Long likes = 0L; // 좋아요 수
 
     @Setter @ManyToOne(optional = false) private Member member; // 멤버 (ID)
+
+    // 리뷰는 여러 사람에게 좋아요를 받을 수 있음
+    @OneToMany(mappedBy = "review")
+    private List<ReviewHeart> reviewHearts = new ArrayList<>();
 
     public Review(Movie movie, String content, Member member, Double rating) {
         this.movie = movie;
@@ -83,5 +90,9 @@ public class Review extends BaseEntity {
 
     public void increaseLikes() {
         likes++;
+    }
+
+    public void decreaseLikes() {
+        likes--;
     }
 }

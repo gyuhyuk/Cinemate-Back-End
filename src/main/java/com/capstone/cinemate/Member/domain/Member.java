@@ -1,6 +1,7 @@
 package com.capstone.cinemate.Member.domain;
 
 import com.capstone.cinemate.Genre.domain.GenreMember;
+import com.capstone.cinemate.Heart.domain.ReviewHeart;
 import com.capstone.cinemate.Movie.domain.MemberMovie;
 import com.capstone.cinemate.Review.domain.Review;
 import com.capstone.cinemate.common.entity.BaseEntity;
@@ -43,6 +44,10 @@ public class Member {
     @OneToMany(mappedBy = "member")
     @ToString.Exclude
     private final Set<Review> memberReviews = new LinkedHashSet<>();
+
+    // 멤버의 리뷰 좋아요
+    @OneToMany(mappedBy = "member")
+    private List<ReviewHeart> reviewHearts = new ArrayList<>();
 
     @Builder
     public Member(String memberId, String password, String nickName, Boolean survey) {
