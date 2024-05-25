@@ -22,6 +22,7 @@ public class MemberController {
         this.memberService = memberService;
     }
 
+    // 회원가입
     @PostMapping("/api/auth/sign-up")
     public CustomResponse<SignUpResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         return new CustomResponse<>(
@@ -31,6 +32,7 @@ public class MemberController {
         );
     }
 
+    // 로그인
     @PostMapping("/api/auth/sign-in")
     public CustomResponse<TokenResponse> signIn(@Valid @RequestBody LoginRequest loginRequest) throws CustomException {
         return new CustomResponse<>(
@@ -38,26 +40,29 @@ public class MemberController {
         );
     }
 
+    // 이메일 중복 확인
     @GetMapping("/api/email/{memberId}/exists")
     public CustomResponse<Boolean> checkMemberIdDuplicate(@PathVariable String memberId) {
         return new CustomResponse<> (
-                200,
-                "null",
+                HttpStatus.OK.value(), "null",
                 memberService.checkMemberIdDuplicate(memberId)
                 );
     }
 
+    // 닉네임 중복 확인
     @GetMapping("/api/nickname/{nickName}/exists")
     public CustomResponse<Boolean> checkNicknameDuplicate(@PathVariable String nickName) {
         return new CustomResponse<> (
-                200,
+                HttpStatus.OK.value(),
                 "null",
                 memberService.checkNicknameDuplicate(nickName)
         );
     }
 
+    // 영화 추천
     @GetMapping("/api/recommendation")
-    public ResponseEntity<RecommendationResponse> getMovieRecommendation(@TokenInformation @RequestParam("userId") Long memberId) {
-        return ResponseEntity.ok().body(memberService.recommend(memberId));
+    public CustomResponse<RecommendationResponse> getMovieRecommendation(@RequestParam("userId") Long memberId) {
+        return new CustomResponse<>(
+                HttpStatus.OK.value(), "Success", memberService.recommend(memberId));
     }
 }

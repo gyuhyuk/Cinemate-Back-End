@@ -1,9 +1,7 @@
 package com.capstone.cinemate.Movie.Controller;
 
 import com.capstone.cinemate.Member.controller.helper.TokenInformation;
-import com.capstone.cinemate.Movie.dto.MovieDetailDto;
-import com.capstone.cinemate.Movie.dto.MovieDto;
-import com.capstone.cinemate.Movie.dto.MoviesResponse;
+import com.capstone.cinemate.Movie.dto.*;
 import com.capstone.cinemate.Movie.service.MovieService;
 import com.capstone.cinemate.common.response.CustomResponse;
 import com.capstone.cinemate.common.type.MovieSearchType;
@@ -63,13 +61,15 @@ public class MovieController {
     public ResponseEntity<CustomResponse<MovieDetailDto>> getMovieDetail(@TokenInformation Long memberId, @PathVariable Long movieId) throws IOException, InterruptedException {
         MovieDetailDto response = movieService.getMovieDetails(movieId);
 
-        CustomResponse<MovieDetailDto> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Succeess", response);
+        CustomResponse<MovieDetailDto> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Success", response);
         return ResponseEntity.ok().body(customResponse);
     }
 
-    //    @GetMapping("/api/detail/{movieId}")
-//    public ResponseEntity<CustomResponse<List<MovieDto>>> movieDetails(
-//            @PathVariable Long movieId) {
-//        MovieWithReviewResponse movie = MovieWithReviewResponse.from(movieService.)
-//    }
+    @GetMapping("/api/movie/detail-review/{movieId}")
+    public ResponseEntity<CustomResponse<MovieWithReviewsDto>> getMovieWithReviews(@PathVariable Long movieId) {
+        MovieWithReviewsDto response = movieService.getMovieWithReviews(movieId);
+
+        CustomResponse<MovieWithReviewsDto> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Success", response);
+        return ResponseEntity.ok().body(customResponse);
+    }
 }

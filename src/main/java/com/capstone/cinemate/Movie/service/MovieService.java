@@ -11,6 +11,9 @@ import com.capstone.cinemate.Movie.domain.Movie;
 import com.capstone.cinemate.Movie.dto.*;
 import com.capstone.cinemate.Movie.repository.MemberMovieRepository;
 import com.capstone.cinemate.Movie.repository.MovieRepository;
+import com.capstone.cinemate.Review.domain.Review;
+import com.capstone.cinemate.Review.dto.MovieReviewDto;
+import com.capstone.cinemate.Review.repository.MovieReviewRepository;
 import com.capstone.cinemate.common.exception.CustomException;
 import com.capstone.cinemate.common.exception.ErrorCode;
 import com.capstone.cinemate.common.response.CustomResponse;
@@ -22,19 +25,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.net.http.HttpRequest;
-import java.nio.charset.Charset;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.*;
 
@@ -43,6 +43,7 @@ import java.util.stream.*;
 @RequiredArgsConstructor
 @Slf4j
 public class MovieService {
+    private final MovieReviewRepository movieReviewRepository;
     @Value("${global.ml_server.url}")
     private String ML_SERVER_URL;
     @Value("${global.tmdb.access_token}")
@@ -76,12 +77,12 @@ public class MovieService {
     }
 
     // 영화 정보 입력 시 리뷰 까지 같이 조회
-    @Transactional(readOnly = true)
-    public MovieWithReviewsDto getMovieWithReview(Long movieId) {
-        return movieRepository.findById(movieId)
-                .map(MovieWithReviewsDto::from)
-                .orElseThrow(() -> new EntityNotFoundException("영화가 없습니다. - movieId: " + movieId));
-    }
+//    @Transactional(readOnly = true)
+//    public MovieWithReviewsDto getMovieWithReview(Long movieId) {
+//        return movieRepository.findById(movieId)
+//                .map(MovieWithReviewsDto::from)
+//                .orElseThrow(() -> new EntityNotFoundException("영화가 없습니다. - movieId: " + movieId));
+//    }
 
     // 멤버가 저장한 영화 보기
     @Transactional(readOnly = true)
@@ -153,7 +154,7 @@ public class MovieService {
         return responseEntity.getBody();
     }
 
-    // 영화 상세 정보 보기
+    // 영화 상세 정보 보기 (배우 + 감독진)
     @Transactional(readOnly = true)
     public MovieDetailDto getMovieDetails(Long movieId) throws IOException, InterruptedException {
         MovieDto movieInfo = movieRepository.findById(movieId)
@@ -192,9 +193,21 @@ public class MovieService {
         return new MovieDetailDto(movieInfo, credit);
     }
 
-    // 영화 상세 정보 + 리뷰 까지 같이 보기
-//    @Transactional(readOnly = true)
-//    public MovieWithReviewsDto getMovieDetailWithReviews(Long movieId) {
-//
-//    }
+     // 영화 상세 정보 + 리뷰 까지 같이 보기
+    @Transactional(readOnly = true)
+    public MovieWithReviewsDto getMovieWithReviews(Long movieId) {
+        MovieDto movie = movieRepository.findById(movieId)
+                .map(MovieDto::from)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        List<Review> reviews = movieReviewRepository.findByMovie_Id(movieId);
+
+        Set<MovieReviewDto> movieReviewDtos = reviews.stream()
+                .map(MovieReviewDto::from) // MovieReviewDto의 from 메소드를 사용하여 변환
+                .collect(Collectors.toSet());
+
+        return new MovieWithReviewsDto(movieReviewDtos, movieId, movie.rating(), movie.backdropPath(), movie.originalTitle(),
+                movie.movieTitle(), movie.releaseDate(), movie.posterPath(),
+                movie.overview());
+    }
 }
