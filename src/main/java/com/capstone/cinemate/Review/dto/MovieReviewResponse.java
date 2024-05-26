@@ -9,9 +9,9 @@ public record MovieReviewResponse(Long id, Long movieId, String content, Double 
     }
 
     public static MovieReviewResponse from(MovieReviewDto dto) {
-        String nickname = dto.memberDto().nickName();
+        String nickname = dto.member().nickName();
         if(nickname == null || nickname.isBlank()) {
-            nickname = dto.memberDto().nickName();
+            nickname = dto.member().nickName();
         }
 
         return new MovieReviewResponse(

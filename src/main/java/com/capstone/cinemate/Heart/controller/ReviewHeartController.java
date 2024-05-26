@@ -22,9 +22,4 @@ public class ReviewHeartController {
         String message = isLiked ? "좋아요를 눌렀습니다." : "좋아요를 취소했습니다.";
         return new CustomResponse<>(HttpStatus.OK.value(), "Success", message);
     }
-
-//    @GetMapping("/api/review/likes/{memberId}")
-//    public CustomResponse<?> getReviewLikes(@PathVariable("memberId") Long memberId) {
-//
-//    }
 }

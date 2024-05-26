@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -32,6 +34,13 @@ public class MovieReviewController {
         return new CustomResponse<>(HttpStatus.CREATED.value(), "별점이 등록되었습니다.", reviewResponse);
     }
 
+    // 나의 리뷰 내용 조회
+    @GetMapping("/api/myreview")
+    public CustomResponse<?> searchMyReview(@TokenInformation Long memberId) {
+        List<MovieReviewDto> movieReviews = movieReviewService.searchMyReview(memberId);
+
+        return new CustomResponse<>(HttpStatus.CREATED.value(), "success", movieReviews);
+    }
 
     // 리뷰 내용 등록
     @PostMapping("/api/movie/{movieId}/review/content")

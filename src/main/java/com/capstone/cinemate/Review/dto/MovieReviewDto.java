@@ -12,18 +12,18 @@ import java.time.LocalDateTime;
  * DTO for {@link com.capstone.cinemate.Review.domain.Review}
  */
 public record MovieReviewDto(Long id, Long movieId, String content, Double rating,
-                             Long likes, MemberReviewDto memberDto, LocalDateTime createdAt,
+                             Long likes, MemberReviewDto member, LocalDateTime createdAt,
                              LocalDateTime modifiedAt) {
-    public static MovieReviewDto of(Long id, Long movieId, String content, Double rating, Long likes, MemberReviewDto memberDto, LocalDateTime createdAt, LocalDateTime modifiedAt) {
-        return new MovieReviewDto(id, movieId, content, rating, likes, memberDto, createdAt, modifiedAt);
+    public static MovieReviewDto of(Long id, Long movieId, String content, Double rating, Long likes, MemberReviewDto member, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+        return new MovieReviewDto(id, movieId, content, rating, likes, member, createdAt, modifiedAt);
     }
 
-    public static MovieReviewDto of(Long movieId, String content, Double rating, MemberReviewDto memberDto) {
-        return new MovieReviewDto(null, movieId, content, rating, null, memberDto, null, null);
+    public static MovieReviewDto of(Long movieId, String content, Double rating, MemberReviewDto member) {
+        return new MovieReviewDto(null, movieId, content, rating, null, member, null, null);
     }
 
-    public static MovieReviewDto of(Long movieId, Double rating, MemberReviewDto memberDto) {
-        return new MovieReviewDto(null, movieId, null, rating, null, memberDto, null, null);
+    public static MovieReviewDto of(Long movieId, Double rating, MemberReviewDto member) {
+        return new MovieReviewDto(null, movieId, null, rating, null, member, null, null);
     }
 
     public static MovieReviewDto from(Review entity) {

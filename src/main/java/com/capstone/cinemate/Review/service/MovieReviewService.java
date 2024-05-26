@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -30,8 +31,14 @@ public class MovieReviewService {
 
     // 리뷰 내용 조회
     @Transactional(readOnly = true)
-    public List<MovieReviewDto> searchMovieReview(Long movieId) {
-        return List.of();
+    public List<MovieReviewDto> searchMyReview(Long memberId) {
+        List<Review> reviews = movieReviewRepository.findByMember_Id(memberId);
+
+        List<MovieReviewDto> movieReviewDtos = reviews.stream()
+                .map(MovieReviewDto::from)
+                .toList();
+
+        return movieReviewDtos;
     }
 
     // 리뷰 별점 등록 및 수정
