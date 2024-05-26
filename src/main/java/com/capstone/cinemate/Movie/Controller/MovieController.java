@@ -61,6 +61,14 @@ public class MovieController {
         return ResponseEntity.ok().body(response);
     }
 
+    @GetMapping("/api/survey")
+    public ResponseEntity<CustomResponse<MoviesResponse>> getRandomMovies() {
+        MoviesResponse response = movieService.getRandomMovies();
+
+        CustomResponse<MoviesResponse> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Success", response);
+        return ResponseEntity.ok().body(customResponse);
+    }
+
     @GetMapping("/api/movie/detail/{movieId}")
     public ResponseEntity<CustomResponse<MovieDetailDto>> getMovieDetail(@TokenInformation Long memberId, @PathVariable Long movieId) throws IOException, InterruptedException {
         MovieDetailDto response = movieService.getMovieDetails(movieId);

@@ -94,6 +94,48 @@ public class MovieService {
         return new MoviesResponse(movieResponses);
     }
 
+    @Transactional(readOnly = true)
+    public MoviesResponse getRandomMovies() {
+        Long[] VERSION_1_INDEX = {5638L, 3916L, 5233L, 2825L, 5876L, 4942L, 5919L, 4895L, 4671L, 4508L, 2061L, 4727L, 4888L, 5840L, 3760L, 4092L, 6215L, 4944L};
+        // Version 2 Index
+        Long[] VERSION_2_INDEX = {4914L, 4285L, 100L, 4879L, 109L, 3113L, 5205L, 5342L, 5679L, 3310L, 310L, 5230L, 4599L, 3202L, 3760L, 4092L, 5072L, 4857L};
+        // Version 3 Index
+        Long[] VERSION_3_INDEX = {4227L, 3913L, 4368L, 4841L, 5021L, 5876L, 4895L, 5342L, 4047L, 3310L, 5552L, 4727L, 4888L, 3202L, 3760L, 4092L, 6511L, 4608L};
+
+        int randomVersion = new Random().nextInt(3)+1;
+
+        Long[] movieIds;
+        switch (randomVersion) {
+            case 1:
+                movieIds = VERSION_1_INDEX;
+                break;
+            case 2:
+                movieIds = VERSION_2_INDEX;
+                break;
+            case 3:
+                movieIds = VERSION_3_INDEX;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + randomVersion);
+        }
+
+        List<Movie> movies = movieRepository.findAllById(List.of(movieIds));
+
+        List<MovieResponse> movieResponses = movies.stream()
+                .map(movie -> new MovieResponse(movie.getId(),
+                        movie.getMovieId(),
+                        movie.getRating(),
+                        movie.getBackdropPath(),
+                        movie.getOriginalTitle(),
+                        movie.getMovieTitle(),
+                        movie.getReleaseDate(),
+                        movie.getPosterPath(),
+                        movie.getOverview()))
+                .collect(Collectors.toList());
+
+        return new MoviesResponse(movieResponses);
+    }
+
     // 멤버가 영화 저장하기
     @Transactional
     public void saveMemberMovieSurveyResult(List<Long> movieIds, List<Long> genreIds, Long memberId) {

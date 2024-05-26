@@ -16,9 +16,4 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     List<MovieResponse> findAllByIdIn(List<Long> genreMovieIdList);
     List<Movie> findMoviesByIdIn(List<Long> genreMovieIdList);
-
-//    @Query("SELECT m FROM Movie m WHERE " +
-//            "LOWER(m.movieTitle) LIKE LOWER(CONCAT('%', :searchValue, '%')) " +
-//            "OR LOWER(m.movieTitle) LIKE LOWER(CONCAT('%', REPLACE(:searchValue, ' ', ''), '%'))")
-//    List<Movie> findByMovieTitleContainingOrIgnoreSpaces(@Param("searchValue") String searchValue);
 }
