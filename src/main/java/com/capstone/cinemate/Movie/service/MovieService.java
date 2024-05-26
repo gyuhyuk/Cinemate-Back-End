@@ -4,6 +4,8 @@ import com.capstone.cinemate.Genre.domain.Genre;
 import com.capstone.cinemate.Genre.domain.GenreMember;
 import com.capstone.cinemate.Genre.repository.GenreMemberRepository;
 import com.capstone.cinemate.Genre.repository.GenreRepository;
+import com.capstone.cinemate.Heart.domain.MovieHeart;
+import com.capstone.cinemate.Heart.repository.MovieHeartRepository;
 import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Member.repository.MemberRepository;
 import com.capstone.cinemate.Movie.domain.MemberMovie;
@@ -43,6 +45,7 @@ import java.util.stream.*;
 @RequiredArgsConstructor
 @Slf4j
 public class MovieService {
+    private final MovieHeartRepository movieHeartRepository;
     private final MovieReviewRepository movieReviewRepository;
     @Value("${global.ml_server.url}")
     private String ML_SERVER_URL;
@@ -56,26 +59,37 @@ public class MovieService {
 
 
     // 전체 영화 return
-    @Transactional(readOnly = true)
-    public List<MovieDto> getAllMovies() {
-        return movieRepository.findAll().stream()
-                .map(MovieDto::from)
-                .collect(Collectors.toList());
-    }
+//    @Transactional(readOnly = true)
+//    public List<MovieDto> getAllMovies() {
+//        return movieRepository.findAll().stream()
+//                .map(MovieDto::from)
+//                .collect(Collectors.toList());
+//    }
 
     // 영화 검색
     @Transactional(readOnly = true)
-    public List<MovieDto> searchMoviesByPartialTitle(MovieSearchType movieSearchType, String searchValue) {
+    public List<MovieDto> searchMoviesByPartialTitle(MovieSearchType movieSearchType, String searchValue, Long memberId) {
+        List<Long> likedMovieIds = movieHeartRepository.findByMemberId(memberId)
+                .stream()
+                .map(movieHeart -> movieHeart.getMovie().getId())
+                .toList();
+
         if (movieSearchType == MovieSearchType.TITLE) {
             String sanitizedSearchValue = searchValue.replaceAll("\\s+", ""); // 공백 제거
             return movieRepository.findByMovieTitleContaining(sanitizedSearchValue).stream()
-                    .map(MovieDto::from)
+                    .map(movie -> {
+                        Long movieId = movie.getId();
+                        boolean isLiked = likedMovieIds.contains(movieId);
+//                        System.out.println("Movie ID: " + movieId + ", isLiked: " + isLiked); // 디버깅 메시지
+                        return MovieDto.from(movie, isLiked);
+                    })
                     .collect(Collectors.toList());
         } else {
             // 다른 검색 유형에 대한 처리 추가 가능
             return Collections.emptyList(); // 다른 검색 유형을 처리하지 않는 경우 빈 리스트 반환
         }
     }
+
 
     // 영화 정보 입력 시 리뷰 까지 같이 조회
 //    @Transactional(readOnly = true)
@@ -199,10 +213,16 @@ public class MovieService {
 
     // 영화 상세 정보 보기 (배우 + 감독진)
     @Transactional(readOnly = true)
-    public MovieDetailDto getMovieDetails(Long movieId) throws IOException, InterruptedException {
+    public MovieDetailDto getMovieDetails(Long memberId, Long movieId) throws IOException, InterruptedException {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED_USER));
         MovieDto movieInfo = movieRepository.findById(movieId)
-                .map(MovieDto::from)
+                .map(movieEntity -> {
+                    Boolean isLiked = movieHeartRepository.existsByMemberIdAndMovieId(memberId, movieId);
+                    return MovieDto.from(movieEntity, isLiked);
+                })
                 .orElseThrow(() -> new EntityNotFoundException("영화가 없습니다. - movieId: " + movieId));
+        boolean isLiked = movieHeartRepository.existsByMemberIdAndMovieId(memberId, movieId);
+
         // TMDB
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.themoviedb.org/3/movie/" + movieInfo.movieId() + "/credits?language=ko-KR"))
@@ -233,14 +253,17 @@ public class MovieService {
             crew.setProfile_path(newPosterPath);
         }
 
-        return new MovieDetailDto(movieInfo, credit);
+        return new MovieDetailDto(movieInfo, credit, isLiked);
     }
 
      // 영화 상세 정보 + 리뷰 까지 같이 보기
     @Transactional(readOnly = true)
-    public MovieWithReviewsDto getMovieWithReviews(Long movieId) {
+    public MovieWithReviewsDto getMovieWithReviews(Long movieId, Long memberId) {
         MovieDto movie = movieRepository.findById(movieId)
-                .map(MovieDto::from)
+                .map(movie1 -> {
+                    Boolean isLiked = movieHeartRepository.existsByMemberIdAndMovieId(memberId, movieId);
+                    return MovieDto.from(movie1, isLiked);
+                })
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<Review> reviews = movieReviewRepository.findByMovie_Id(movieId);
@@ -251,6 +274,6 @@ public class MovieService {
 
         return new MovieWithReviewsDto(movieReviewDtos, movieId, movie.rating(), movie.backdropPath(), movie.originalTitle(),
                 movie.movieTitle(), movie.releaseDate(), movie.posterPath(),
-                movie.overview());
+                movie.overview(), movie.isLiked());
     }
 }

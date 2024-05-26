@@ -12,15 +12,15 @@ import java.util.stream.Collectors;
 public record MovieWithReviewsDto(Set<MovieReviewDto> movieReviewDtos,
                                   Long movieId, Double rating, String backdropPath, String originalTitle,
                                   String movieTitle, LocalDateTime releaseDate, String posterPath,
-                                  String overview) {
+                                  String overview, Boolean isLiked) {
     public static MovieWithReviewsDto of(Set<MovieReviewDto> movieReviewDtos,
                                          Long movieId, Double rating, String backdropPath, String originalTitle,
                                          String movieTitle, LocalDateTime releaseDate, String posterPath,
-                                         String overview) {
-        return new MovieWithReviewsDto(movieReviewDtos, movieId, rating, backdropPath, originalTitle, movieTitle, releaseDate, posterPath, overview);
+                                         String overview, Boolean isLiked) {
+        return new MovieWithReviewsDto(movieReviewDtos, movieId, rating, backdropPath, originalTitle, movieTitle, releaseDate, posterPath, overview, isLiked);
     }
 
-    public static MovieWithReviewsDto from(Movie entity) {
+    public static MovieWithReviewsDto from(Movie entity, Boolean isLiked) {
         return new MovieWithReviewsDto(
                 entity.getMovieReviews().stream().map(MovieReviewDto::from)
                                 .collect(Collectors.toCollection(LinkedHashSet::new)),
@@ -31,7 +31,8 @@ public record MovieWithReviewsDto(Set<MovieReviewDto> movieReviewDtos,
                 entity.getMovieTitle(),
                 entity.getReleaseDate(),
                 entity.getPosterPath(),
-                entity.getOverview()
+                entity.getOverview(),
+                isLiked
         );
     }
 }

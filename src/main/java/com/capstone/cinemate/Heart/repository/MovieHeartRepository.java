@@ -11,7 +11,9 @@ import java.util.Optional;
 
 public interface MovieHeartRepository extends JpaRepository<MovieHeart, Long> {
     Optional<MovieHeart> findByMemberAndMovie(Member member, Movie movie);
-
+    List<MovieHeart> findByMemberId(Long memberId);
     @Query("SELECT mo FROM MovieHeart m INNER JOIN Movie mo ON m.movie.id = mo.id WHERE m.member.id = :memberId")
     List<Movie> findLikeMoviesByMemberId(Long memberId);
+
+    boolean existsByMemberIdAndMovieId(Long memberId, Long movieId);
 }

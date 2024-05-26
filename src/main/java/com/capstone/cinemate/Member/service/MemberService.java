@@ -4,7 +4,6 @@ import com.capstone.cinemate.Genre.repository.GenreMemberRepository;
 import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Member.dto.*;
 import com.capstone.cinemate.Member.repository.MemberRepository;
-import com.capstone.cinemate.Movie.domain.Movie;
 import com.capstone.cinemate.Movie.dto.MovieListWithGenreId;
 import com.capstone.cinemate.Movie.dto.MovieResponse;
 import com.capstone.cinemate.Movie.repository.MovieRepository;
@@ -16,7 +15,6 @@ import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,10 +23,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

@@ -34,6 +34,12 @@ public class MovieReviewController {
         return new CustomResponse<>(HttpStatus.CREATED.value(), "별점이 등록되었습니다.", reviewResponse);
     }
 
+    @GetMapping("/api/movie/{movieId}/review/rating")
+    public CustomResponse<?> getRating(@PathVariable("movieId") Long movieId, @TokenInformation Long memberId) {
+        Double rating = movieReviewService.getRating(movieId, memberId);
+        return new CustomResponse<>(HttpStatus.OK.value(), "success", rating);
+    }
+
     // 나의 리뷰 내용 조회
     @GetMapping("/api/myreview")
     public CustomResponse<?> searchMyReview(@TokenInformation Long memberId) {

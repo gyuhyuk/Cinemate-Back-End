@@ -1,6 +1,7 @@
 package com.capstone.cinemate.Movie.Controller;
 
 import com.capstone.cinemate.Member.controller.helper.TokenInformation;
+import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Movie.dto.*;
 import com.capstone.cinemate.Movie.service.MovieService;
 import com.capstone.cinemate.common.response.CustomResponse;
@@ -23,11 +24,13 @@ public class MovieController {
     @GetMapping("/api/search-movies")
     public ResponseEntity<CustomResponse<List<MovieDto>>> movies(
             @RequestParam(required = false) MovieSearchType movieSearchType,
-            @RequestParam(required = false) String searchValue) {
+            @RequestParam(required = false) String searchValue,
+            @TokenInformation Long memberId
+    ) {
         List<MovieDto> movies;
 
         if(searchValue != null && !searchValue.isBlank()) {
-            movies = movieService.searchMoviesByPartialTitle(movieSearchType, searchValue);
+            movies = movieService.searchMoviesByPartialTitle(movieSearchType, searchValue, memberId);
         }
         else {
             movies = List.of();
@@ -61,6 +64,7 @@ public class MovieController {
         return ResponseEntity.ok().body(response);
     }
 
+    // 설문조사에서 랜덤하게 영화 보내기
     @GetMapping("/api/survey")
     public ResponseEntity<CustomResponse<MoviesResponse>> getRandomMovies() {
         MoviesResponse response = movieService.getRandomMovies();
@@ -69,17 +73,18 @@ public class MovieController {
         return ResponseEntity.ok().body(customResponse);
     }
 
+    // 영화 상세 조회
     @GetMapping("/api/movie/detail/{movieId}")
     public ResponseEntity<CustomResponse<MovieDetailDto>> getMovieDetail(@TokenInformation Long memberId, @PathVariable Long movieId) throws IOException, InterruptedException {
-        MovieDetailDto response = movieService.getMovieDetails(movieId);
+        MovieDetailDto response = movieService.getMovieDetails(memberId, movieId);
 
         CustomResponse<MovieDetailDto> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Success", response);
         return ResponseEntity.ok().body(customResponse);
     }
 
     @GetMapping("/api/movie/detail-review/{movieId}")
-    public ResponseEntity<CustomResponse<MovieWithReviewsDto>> getMovieWithReviews(@PathVariable Long movieId) {
-        MovieWithReviewsDto response = movieService.getMovieWithReviews(movieId);
+    public ResponseEntity<CustomResponse<MovieWithReviewsDto>> getMovieWithReviews(@PathVariable Long movieId, @TokenInformation Long memberId) {
+        MovieWithReviewsDto response = movieService.getMovieWithReviews(movieId, memberId);
 
         CustomResponse<MovieWithReviewsDto> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Success", response);
         return ResponseEntity.ok().body(customResponse);

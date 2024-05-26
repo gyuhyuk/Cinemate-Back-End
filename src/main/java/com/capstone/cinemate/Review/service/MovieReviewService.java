@@ -52,6 +52,16 @@ public class MovieReviewService {
         };
     }
 
+    // 리뷰 별점 받아오기
+    @Transactional
+    public Double getRating(Long movieId, Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
+
+        Optional<Review> optionalReview = movieReviewRepository.findByMovie_IdAndMember_Id(movieId, memberId);
+
+        return optionalReview.get().getRating();
+    }
 
     // 리뷰 별점 등록 및 수정
     @Transactional
