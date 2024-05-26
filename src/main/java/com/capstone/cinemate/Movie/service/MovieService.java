@@ -67,8 +67,8 @@ public class MovieService {
     @Transactional(readOnly = true)
     public List<MovieDto> searchMoviesByPartialTitle(MovieSearchType movieSearchType, String searchValue) {
         if (movieSearchType == MovieSearchType.TITLE) {
-            String trimmedSearchValue = searchValue.replace(" ", "");
-            return movieRepository.findByMovieTitleContaining(trimmedSearchValue).stream()
+            String sanitizedSearchValue = searchValue.replaceAll("\\s+", ""); // 공백 제거
+            return movieRepository.findByMovieTitleContaining(sanitizedSearchValue).stream()
                     .map(MovieDto::from)
                     .collect(Collectors.toList());
         } else {
