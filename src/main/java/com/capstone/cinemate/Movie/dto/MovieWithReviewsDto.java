@@ -20,10 +20,13 @@ public record MovieWithReviewsDto(Set<MovieReviewDto> movieReviewDtos,
         return new MovieWithReviewsDto(movieReviewDtos, movieId, rating, backdropPath, originalTitle, movieTitle, releaseDate, posterPath, overview, isLiked);
     }
 
-    public static MovieWithReviewsDto from(Movie entity, Boolean isLiked) {
+    public static MovieWithReviewsDto from(Movie entity, Long memberId, Boolean isLiked) {
+        Set<MovieReviewDto> reviewDtos = entity.getMovieReviews().stream()
+                .map(review -> MovieReviewDto.from(review, review.getMember().getId().equals(memberId)))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
         return new MovieWithReviewsDto(
-                entity.getMovieReviews().stream().map(MovieReviewDto::from)
-                                .collect(Collectors.toCollection(LinkedHashSet::new)),
+                reviewDtos,
                 entity.getMovieId(),
                 entity.getRating(),
                 entity.getBackdropPath(),

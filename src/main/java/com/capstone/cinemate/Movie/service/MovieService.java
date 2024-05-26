@@ -203,7 +203,6 @@ public class MovieService {
                     return MovieDto.from(movieEntity, isLiked);
                 })
                 .orElseThrow(() -> new EntityNotFoundException("영화가 없습니다. - movieId: " + movieId));
-        boolean isLiked = movieHeartRepository.existsByMemberIdAndMovieId(memberId, movieId);
 
         // TMDB
         HttpRequest request = HttpRequest.newBuilder()
@@ -238,7 +237,6 @@ public class MovieService {
         return new MovieDetailDto(movieInfo, credit);
     }
 
-     // 영화 상세 정보 + 리뷰 까지 같이 보기
     @Transactional(readOnly = true)
     public MovieWithReviewsDto getMovieWithReviews(Long movieId, Long memberId) {
         MovieDto movie = movieRepository.findById(movieId)
@@ -250,12 +248,14 @@ public class MovieService {
 
         List<Review> reviews = movieReviewRepository.findByMovie_Id(movieId);
 
+        // Review 객체를 MovieReviewDto 객체로 변환할 때, 현재 memberId와 리뷰 작성자의 ID를 비교하여 isMine 값을 설정
         Set<MovieReviewDto> movieReviewDtos = reviews.stream()
-                .map(MovieReviewDto::from) // MovieReviewDto의 from 메소드를 사용하여 변환
+                .map(review -> MovieReviewDto.from(review, review.getMember().getId().equals(memberId))) // 수정된 부분
                 .collect(Collectors.toSet());
 
         return new MovieWithReviewsDto(movieReviewDtos, movieId, movie.rating(), movie.backdropPath(), movie.originalTitle(),
                 movie.movieTitle(), movie.releaseDate(), movie.posterPath(),
                 movie.overview(), movie.isLiked());
     }
+
 }

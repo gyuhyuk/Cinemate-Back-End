@@ -55,8 +55,8 @@ public class MovieReviewController {
 
     // 각 영화들에 대한 리뷰 조회
     @GetMapping("/api/movie/{movieId}/review/content")
-    public CustomResponse<?> searchMovieReview(@RequestParam(required = false, defaultValue = "createdAt", value = "orderby") String criteria, @PathVariable("movieId") Long movieId) {
-        List<MovieReviewDto> movieReviews = movieReviewService.searchMovieReview(movieId, criteria);
+    public CustomResponse<?> searchMovieReview(@RequestParam(required = false, defaultValue = "createdAt", value = "orderby") String criteria,@TokenInformation Long memberId, @PathVariable("movieId") Long movieId) {
+        List<MovieReviewDto> movieReviews = movieReviewService.searchMovieReview(movieId, memberId, criteria);
 
         return new CustomResponse<>(HttpStatus.OK.value(), "success", movieReviews);
     }

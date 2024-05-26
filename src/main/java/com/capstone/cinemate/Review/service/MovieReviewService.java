@@ -35,7 +35,7 @@ public class MovieReviewService {
         List<Review> reviews = movieReviewRepository.findByMember_Id(memberId);
 
         List<MovieReviewDto> movieReviewDtos = reviews.stream()
-                .map(MovieReviewDto::from)
+                .map(review -> MovieReviewDto.from(review, true)) // isMine을 true로 설정
                 .toList();
 
         return movieReviewDtos;
@@ -43,13 +43,26 @@ public class MovieReviewService {
 
     // 리뷰 조회
     @Transactional(readOnly = true)
-    public List<MovieReviewDto> searchMovieReview(Long movieId, String criteria) {
-        return switch (criteria) {
-            case "like" -> movieReviewRepository.findByMovieIdOrderByLikesDesc(movieId).stream().map(MovieReviewDto::from).toList();
-            case "old" -> movieReviewRepository.findByMovieIdOrderByCreatedAtAsc(movieId).stream().map(MovieReviewDto::from).toList();
-            case "grade" -> movieReviewRepository.findByMovieIdOrderByRatingDesc(movieId).stream().map(MovieReviewDto::from).toList();
-            default -> movieReviewRepository.findByMovieIdOrderByCreatedAtDesc(movieId).stream().map(MovieReviewDto::from).toList();
-        };
+    public List<MovieReviewDto> searchMovieReview(Long movieId, Long memberId, String criteria) {
+        switch (criteria) {
+            case "like":
+                return movieReviewRepository.findByMovieIdOrderByLikesDesc(movieId).stream()
+                        .map(review -> MovieReviewDto.from(review, review.getMember().getId().equals(memberId)))
+                        .collect(Collectors.toList());
+            case "old":
+                return movieReviewRepository.findByMovieIdOrderByCreatedAtAsc(movieId).stream()
+                        .map(review -> MovieReviewDto.from(review, review.getMember().getId().equals(memberId)))
+                        .collect(Collectors.toList());
+            case "grade":
+                return movieReviewRepository.findByMovieIdOrderByRatingDesc(movieId).stream()
+                        .map(review -> MovieReviewDto.from(review, review.getMember().getId().equals(memberId)))
+                        .collect(Collectors.toList());
+
+            default:
+                return movieReviewRepository.findByMovieIdOrderByCreatedAtDesc(movieId).stream()
+                        .map(review -> MovieReviewDto.from(review, review.getMember().getId().equals(memberId)))
+                        .collect(Collectors.toList());
+        }
     }
 
     // 리뷰 별점 받아오기
@@ -91,11 +104,11 @@ public class MovieReviewService {
             validateMember(review, member);
             review.ratingUpdate(movie, movieReviewRatingRequest.getRating(), member);
             Review updatedReview = movieReviewRepository.save(review);
-            return MovieReviewDto.from(updatedReview);
+            return MovieReviewDto.from(updatedReview, true);
         } else {
             Review newReview = Review.of(movie, member, movieReviewRatingRequest.getRating());
             Review savedReview = movieReviewRepository.save(newReview);
-            return MovieReviewDto.from(savedReview);
+            return MovieReviewDto.from(savedReview, true);
         }
     }
 
@@ -112,7 +125,7 @@ public class MovieReviewService {
         if(review.getContent().isEmpty()) {
             review.setContent(movieReviewRequest.getContent());
             Review savedReview = movieReviewRepository.save(review);
-            return MovieReviewDto.from(savedReview);
+            return MovieReviewDto.from(savedReview, true);
         } else {
             throw new CustomException(ErrorCode.REVIEW_ALREADY_EXISTS);
         }
@@ -136,7 +149,7 @@ public class MovieReviewService {
         review.contentUpdate(movie, movieReviewRequest.getContent(), member);
         Review updatedReview = movieReviewRepository.save(review);
 
-        return MovieReviewDto.from(updatedReview);
+        return MovieReviewDto.from(updatedReview, true);
     }
 
     // 리뷰 삭제

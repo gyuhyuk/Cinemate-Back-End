@@ -13,20 +13,20 @@ import java.time.LocalDateTime;
  */
 public record MovieReviewDto(Long id, Long movieId, String content, Double rating,
                              Long likes, MemberReviewDto member, LocalDateTime createdAt,
-                             LocalDateTime modifiedAt) {
-    public static MovieReviewDto of(Long id, Long movieId, String content, Double rating, Long likes, MemberReviewDto member, LocalDateTime createdAt, LocalDateTime modifiedAt) {
-        return new MovieReviewDto(id, movieId, content, rating, likes, member, createdAt, modifiedAt);
+                             LocalDateTime modifiedAt, Boolean isMine) {
+    public static MovieReviewDto of(Long id, Long movieId, String content, Double rating, Long likes, MemberReviewDto member, LocalDateTime createdAt, LocalDateTime modifiedAt, Boolean isMine) {
+        return new MovieReviewDto(id, movieId, content, rating, likes, member, createdAt, modifiedAt, isMine);
     }
 
     public static MovieReviewDto of(Long movieId, String content, Double rating, MemberReviewDto member) {
-        return new MovieReviewDto(null, movieId, content, rating, null, member, null, null);
+        return new MovieReviewDto(null, movieId, content, rating, null, member, null, null, null);
     }
 
     public static MovieReviewDto of(Long movieId, Double rating, MemberReviewDto member) {
-        return new MovieReviewDto(null, movieId, null, rating, null, member, null, null);
+        return new MovieReviewDto(null, movieId, null, rating, null, member, null, null, null);
     }
 
-    public static MovieReviewDto from(Review entity) {
+    public static MovieReviewDto from(Review entity, Boolean isMine) {
         return new MovieReviewDto(
                 entity.getId(),
                 entity.getMovie().getId(),
@@ -35,7 +35,8 @@ public record MovieReviewDto(Long id, Long movieId, String content, Double ratin
                 entity.getLikes(),
                 MemberReviewDto.from(entity.getMember()),
                 entity.getCreatedAt(),
-                entity.getModifiedAt()
+                entity.getModifiedAt(),
+                isMine
         );
     }
 }
