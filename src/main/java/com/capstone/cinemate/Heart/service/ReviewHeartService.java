@@ -1,7 +1,6 @@
 package com.capstone.cinemate.Heart.service;
 
 import com.capstone.cinemate.Heart.domain.ReviewHeart;
-import com.capstone.cinemate.Heart.dto.ReviewHeartRequestDto;
 import com.capstone.cinemate.Heart.repository.ReviewHeartRepository;
 import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Member.repository.MemberRepository;

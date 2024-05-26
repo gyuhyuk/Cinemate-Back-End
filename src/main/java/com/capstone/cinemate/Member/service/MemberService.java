@@ -5,6 +5,7 @@ import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Member.dto.*;
 import com.capstone.cinemate.Member.repository.MemberRepository;
 import com.capstone.cinemate.Movie.domain.Movie;
+import com.capstone.cinemate.Movie.dto.MovieListWithGenreId;
 import com.capstone.cinemate.Movie.dto.MovieResponse;
 import com.capstone.cinemate.Movie.repository.MovieRepository;
 import com.capstone.cinemate.common.exception.CustomException;
@@ -125,11 +126,14 @@ public class MemberService {
     }
 
     private RecommendationResponse getRecommendationResponse(Long memberId, List<Long> genreIdList, List<Long> defaultRecommendIdResult) {
-        List<List<MovieResponse>> genreMovieLists = new ArrayList<>();
+        List<MovieListWithGenreId> genreMovieLists = new ArrayList<>();
 
         for (Long id : genreIdList) {
             List<Long> genreMovieIdList = fetchGenreRecommendations(memberId, id);
-            genreMovieLists.add(movieRepository.findAllByIdIn(genreMovieIdList));
+            MovieListWithGenreId movieListWithGenreId = new MovieListWithGenreId();
+            movieListWithGenreId.setGenreId(id);
+            movieListWithGenreId.setMovieList(movieRepository.findAllByIdIn(genreMovieIdList));
+            genreMovieLists.add(movieListWithGenreId);
         }
 
         // 영화 ID 리스트를 영화 상세 정보로 변환
