@@ -235,7 +235,7 @@ public class MovieService {
             crew.setProfile_path(newPosterPath);
         }
 
-        return new MovieDetailDto(movieInfo, credit, isLiked);
+        return new MovieDetailDto(movieInfo, credit);
     }
 
      // 영화 상세 정보 + 리뷰 까지 같이 보기
