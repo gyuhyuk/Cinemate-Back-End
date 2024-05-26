@@ -45,9 +45,9 @@ public class MovieReviewService {
     @Transactional(readOnly = true)
     public List<MovieReviewDto> searchMovieReview(Long movieId, String criteria) {
         return switch (criteria) {
-            case "좋아요 순" -> movieReviewRepository.findByMovieIdOrderByLikesDesc(movieId).stream().map(MovieReviewDto::from).toList();
-            case "오래된 순" -> movieReviewRepository.findByMovieIdOrderByCreatedAtAsc(movieId).stream().map(MovieReviewDto::from).toList();
-            case "평점순" -> movieReviewRepository.findByMovieIdOrderByRatingDesc(movieId).stream().map(MovieReviewDto::from).toList();
+            case "like" -> movieReviewRepository.findByMovieIdOrderByLikesDesc(movieId).stream().map(MovieReviewDto::from).toList();
+            case "old" -> movieReviewRepository.findByMovieIdOrderByCreatedAtAsc(movieId).stream().map(MovieReviewDto::from).toList();
+            case "grade" -> movieReviewRepository.findByMovieIdOrderByRatingDesc(movieId).stream().map(MovieReviewDto::from).toList();
             default -> movieReviewRepository.findByMovieIdOrderByCreatedAtDesc(movieId).stream().map(MovieReviewDto::from).toList();
         };
     }
@@ -117,6 +117,7 @@ public class MovieReviewService {
             throw new CustomException(ErrorCode.REVIEW_ALREADY_EXISTS);
         }
     }
+
     // 리뷰 내용 수정
     @Transactional
     public MovieReviewDto updateMovieContent(MovieReviewContentRequest movieReviewRequest, Long movieId, Long memberId) {

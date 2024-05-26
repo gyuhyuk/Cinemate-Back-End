@@ -57,15 +57,6 @@ public class MovieService {
     private final GenreMemberRepository genreMemberRepository;
     private final MemberRepository memberRepository;
 
-
-    // 전체 영화 return
-//    @Transactional(readOnly = true)
-//    public List<MovieDto> getAllMovies() {
-//        return movieRepository.findAll().stream()
-//                .map(MovieDto::from)
-//                .collect(Collectors.toList());
-//    }
-
     // 영화 검색
     @Transactional(readOnly = true)
     public List<MovieDto> searchMoviesByPartialTitle(MovieSearchType movieSearchType, String searchValue, Long memberId) {
@@ -89,15 +80,6 @@ public class MovieService {
             return Collections.emptyList(); // 다른 검색 유형을 처리하지 않는 경우 빈 리스트 반환
         }
     }
-
-
-    // 영화 정보 입력 시 리뷰 까지 같이 조회
-//    @Transactional(readOnly = true)
-//    public MovieWithReviewsDto getMovieWithReview(Long movieId) {
-//        return movieRepository.findById(movieId)
-//                .map(MovieWithReviewsDto::from)
-//                .orElseThrow(() -> new EntityNotFoundException("영화가 없습니다. - movieId: " + movieId));
-//    }
 
     // 멤버가 저장한 영화 보기
     @Transactional(readOnly = true)

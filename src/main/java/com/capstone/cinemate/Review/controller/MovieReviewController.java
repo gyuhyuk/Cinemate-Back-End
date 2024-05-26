@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,9 +44,13 @@ public class MovieReviewController {
     // 나의 리뷰 내용 조회
     @GetMapping("/api/myreview")
     public CustomResponse<?> searchMyReview(@TokenInformation Long memberId) {
-        List<MovieReviewDto> movieReviews = movieReviewService.searchMyReview(memberId);
+        List<MovieReviewDto> reviews = movieReviewService.searchMyReview(memberId);
 
-        return new CustomResponse<>(HttpStatus.CREATED.value(), "success", movieReviews);
+        List<MovieReviewDto> filteredReviews = reviews.stream()
+                .filter(review -> review.content() != null && !review.content().isEmpty())
+                .collect(Collectors.toList());
+
+        return new CustomResponse<>(HttpStatus.OK.value(), "success", filteredReviews);
     }
 
     // 각 영화들에 대한 리뷰 조회
@@ -53,7 +58,7 @@ public class MovieReviewController {
     public CustomResponse<?> searchMovieReview(@RequestParam(required = false, defaultValue = "createdAt", value = "orderby") String criteria, @PathVariable("movieId") Long movieId) {
         List<MovieReviewDto> movieReviews = movieReviewService.searchMovieReview(movieId, criteria);
 
-        return new CustomResponse<>(HttpStatus.CREATED.value(), "success", movieReviews);
+        return new CustomResponse<>(HttpStatus.OK.value(), "success", movieReviews);
     }
 
     // 리뷰 내용 등록
@@ -70,7 +75,7 @@ public class MovieReviewController {
     public CustomResponse<MovieReviewResponse> updateReview(@PathVariable("movieId") Long movieId, @RequestBody MovieReviewContentRequest request, @TokenInformation Long memberId) {
         MovieReviewDto movieReviewDto = movieReviewService.updateMovieContent(request, movieId, memberId);
         MovieReviewResponse reviewResponse = MovieReviewResponse.from(movieReviewDto);
-        return new CustomResponse<>(HttpStatus.CREATED.value(), "리뷰가 수정되었습니다.", reviewResponse);
+        return new CustomResponse<>(HttpStatus.OK.value(), "리뷰가 수정되었습니다.", reviewResponse);
     }
 
 
