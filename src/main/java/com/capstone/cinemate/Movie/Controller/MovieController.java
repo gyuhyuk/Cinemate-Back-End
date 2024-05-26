@@ -30,8 +30,12 @@ public class MovieController {
             movies = movieService.searchMoviesByPartialTitle(movieSearchType, searchValue);
         }
         else {
-            movies = movieService.getAllMovies();
+            movies = List.of();
         }
+        if (movies.size() > 20) {
+            movies = movies.subList(0, 20);
+        }
+
         CustomResponse<List<MovieDto>> response = new CustomResponse<>(HttpStatus.OK.value(), "Success", movies);
         return ResponseEntity.ok().body(response);
     }

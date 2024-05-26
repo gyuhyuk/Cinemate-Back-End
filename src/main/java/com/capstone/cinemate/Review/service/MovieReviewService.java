@@ -29,7 +29,7 @@ public class MovieReviewService {
     private final MovieReviewRepository movieReviewRepository;
     private final MemberRepository memberRepository;
 
-    // 리뷰 내용 조회
+    // 마이페이지 내 리뷰 조회
     @Transactional(readOnly = true)
     public List<MovieReviewDto> searchMyReview(Long memberId) {
         List<Review> reviews = movieReviewRepository.findByMember_Id(memberId);
@@ -40,6 +40,18 @@ public class MovieReviewService {
 
         return movieReviewDtos;
     }
+
+    // 리뷰 조회
+    @Transactional(readOnly = true)
+    public List<MovieReviewDto> searchMovieReview(Long movieId, String criteria) {
+        return switch (criteria) {
+            case "좋아요 순" -> movieReviewRepository.findByMovieIdOrderByLikesDesc(movieId).stream().map(MovieReviewDto::from).toList();
+            case "오래된 순" -> movieReviewRepository.findByMovieIdOrderByCreatedAtAsc(movieId).stream().map(MovieReviewDto::from).toList();
+            case "평점순" -> movieReviewRepository.findByMovieIdOrderByRatingDesc(movieId).stream().map(MovieReviewDto::from).toList();
+            default -> movieReviewRepository.findByMovieIdOrderByCreatedAtDesc(movieId).stream().map(MovieReviewDto::from).toList();
+        };
+    }
+
 
     // 리뷰 별점 등록 및 수정
     @Transactional
