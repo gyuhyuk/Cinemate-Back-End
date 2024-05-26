@@ -112,9 +112,6 @@ public class MemberService {
     public RecommendationResponse recommend(Long memberId) {
         // 기본 추천
         CustomResponse<List<Long>> defaultRecommendResponse = recommendRequest(memberId);
-//        for (Long id : defaultRecommendResponse.getData()) {
-//            System.out.print("id = " + id + ", ");
-//        }
 
         List<Long> defaultRecommendIdResult = defaultRecommendResponse.getData();
 
@@ -154,9 +151,12 @@ public class MemberService {
     }
 
     public CustomResponse<List<Long>> recommendRequest(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        Long userId = member.getId();
+
         // query parameter 방식 사용
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(ML_SERVER_URL+"/recommendation")
-                .queryParam("userId", memberId)
+                .queryParam("userId", userId)
                 .build(false);
 
         // Header 제작
@@ -174,9 +174,11 @@ public class MemberService {
     }
 
     public CustomResponse<List<Long>> recommendRequest(Long memberId, Long genreId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        Long userId = member.getId();
         // query parameter 방식 사용
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(ML_SERVER_URL+"/recommendation")
-                .queryParam("userId", memberId)
+                .queryParam("userId", userId)
                 .queryParam("genreId", genreId)
                 .build(false);
 

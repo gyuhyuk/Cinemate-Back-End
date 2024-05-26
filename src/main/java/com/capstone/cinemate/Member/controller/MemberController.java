@@ -61,7 +61,7 @@ public class MemberController {
 
     // 영화 추천
     @GetMapping("/api/recommendation")
-    public CustomResponse<RecommendationResponse> getMovieRecommendation(@RequestParam("userId") Long memberId) {
+    public CustomResponse<RecommendationResponse> getMovieRecommendation(@TokenInformation Long memberId) {
         return new CustomResponse<>(
                 HttpStatus.OK.value(), "Success", memberService.recommend(memberId));
     }
