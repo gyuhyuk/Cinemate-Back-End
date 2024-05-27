@@ -60,7 +60,6 @@ public class MovieHeartService {
 
         saveMovieHeartToMlServer(memberId, movieId);
         return existingMovieHeart.isEmpty();
-
     }
 
 

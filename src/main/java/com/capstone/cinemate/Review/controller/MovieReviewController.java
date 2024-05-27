@@ -1,7 +1,6 @@
 package com.capstone.cinemate.Review.controller;
 
 import com.capstone.cinemate.Member.controller.helper.TokenInformation;
-import com.capstone.cinemate.Review.domain.Review;
 import com.capstone.cinemate.Review.dto.MovieReviewDto;
 import com.capstone.cinemate.Review.dto.MovieReviewContentRequest;
 import com.capstone.cinemate.Review.dto.MovieReviewRatingRequest;

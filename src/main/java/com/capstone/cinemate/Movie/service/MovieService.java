@@ -95,27 +95,19 @@ public class MovieService {
     @Transactional(readOnly = true)
     public MoviesResponse getRandomMovies() {
         Long[] VERSION_1_INDEX = {5638L, 3916L, 5233L, 2825L, 5876L, 4942L, 5919L, 4895L, 4671L, 4508L, 2061L, 4727L, 4888L, 5840L, 3760L, 4092L, 6215L, 4944L};
-        // Version 2 Index
+
         Long[] VERSION_2_INDEX = {4914L, 4285L, 100L, 4879L, 109L, 3113L, 5205L, 5342L, 5679L, 3310L, 310L, 5230L, 4599L, 3202L, 3760L, 4092L, 5072L, 4857L};
-        // Version 3 Index
+
         Long[] VERSION_3_INDEX = {4227L, 3913L, 4368L, 4841L, 5021L, 5876L, 4895L, 5342L, 4047L, 3310L, 5552L, 4727L, 4888L, 3202L, 3760L, 4092L, 6511L, 4608L};
 
-        int randomVersion = new Random().nextInt(3)+1;
+        int randomVersion = new Random().nextInt(3)+1; // 1, 2, 3번 버전의 인덱스
 
-        Long[] movieIds;
-        switch (randomVersion) {
-            case 1:
-                movieIds = VERSION_1_INDEX;
-                break;
-            case 2:
-                movieIds = VERSION_2_INDEX;
-                break;
-            case 3:
-                movieIds = VERSION_3_INDEX;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + randomVersion);
-        }
+        Long[] movieIds = switch (randomVersion) {
+            case 1 -> VERSION_1_INDEX;
+            case 2 -> VERSION_2_INDEX;
+            case 3 -> VERSION_3_INDEX;
+            default -> throw new IllegalStateException("Unexpected value: " + randomVersion);
+        };
 
         List<Movie> movies = movieRepository.findAllById(List.of(movieIds));
 
@@ -144,11 +136,11 @@ public class MovieService {
         genreMemberRepository.deleteByMemberId(memberId);
 
 
-        if (movieIds.size() > 3) {
+        if (movieIds.size() > 6) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
-        movieIds.stream().limit(3).forEach(id->{
+        movieIds.stream().limit(6).forEach(id->{
             Movie movie = movieRepository.findById(id)
                     .orElseThrow(IllegalArgumentException::new);
             memberMovieRepository.save(new MemberMovie(member, movie));
