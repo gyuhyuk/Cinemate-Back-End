@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ReviewHeartRepository extends JpaRepository<ReviewHeart, Long> {
-    Optional<ReviewHeart> findByMemberAndMovieAndReview(Member member, Movie movie, Review review);
+    Optional<ReviewHeart> findByMember_IdAndMovie_IdAndReview_Id(Long memberId, Long movieId, Long reviewId);
 }

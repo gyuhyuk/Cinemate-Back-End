@@ -22,7 +22,7 @@ public record MovieWithReviewsDto(Set<MovieReviewDto> movieReviewDtos,
 
     public static MovieWithReviewsDto from(Movie entity, Long memberId, Boolean isLiked) {
         Set<MovieReviewDto> reviewDtos = entity.getMovieReviews().stream()
-                .map(review -> MovieReviewDto.from(review, review.getMember().getId().equals(memberId)))
+                .map(review -> MovieReviewDto.from(review, review.getMember().getId().equals(memberId), isLiked))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return new MovieWithReviewsDto(

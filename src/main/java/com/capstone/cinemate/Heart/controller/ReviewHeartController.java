@@ -5,7 +5,6 @@ import com.capstone.cinemate.Member.controller.helper.TokenInformation;
 import com.capstone.cinemate.common.response.CustomResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;

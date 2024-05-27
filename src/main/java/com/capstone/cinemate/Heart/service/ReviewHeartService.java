@@ -40,7 +40,7 @@ public class ReviewHeartService {
             throw new CustomException(ErrorCode.SELF_LIKE_NOT_ALLOWED);
         }
 
-        Optional<ReviewHeart> existingReviewHeart = reviewHeartRepository.findByMemberAndMovieAndReview(member, movie, review);
+        Optional<ReviewHeart> existingReviewHeart = reviewHeartRepository.findByMember_IdAndMovie_IdAndReview_Id(memberId, movieId, review.getId());
 
         // 이미 좋아요가 눌려있으면
         if(existingReviewHeart.isPresent()) {
@@ -55,7 +55,4 @@ public class ReviewHeartService {
             return true;
         }
     }
-
-//    @Transactional(readOnly = true)
-//    public
 }

@@ -6,6 +6,7 @@ import com.capstone.cinemate.Genre.repository.GenreMemberRepository;
 import com.capstone.cinemate.Genre.repository.GenreRepository;
 import com.capstone.cinemate.Heart.domain.MovieHeart;
 import com.capstone.cinemate.Heart.repository.MovieHeartRepository;
+import com.capstone.cinemate.Heart.repository.ReviewHeartRepository;
 import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Member.repository.MemberRepository;
 import com.capstone.cinemate.Movie.domain.MemberMovie;
@@ -56,6 +57,7 @@ public class MovieService {
     private final MemberMovieRepository memberMovieRepository;
     private final GenreMemberRepository genreMemberRepository;
     private final MemberRepository memberRepository;
+    private final ReviewHeartRepository reviewHeartRepository;
 
     // 영화 검색
     @Transactional(readOnly = true)
@@ -250,7 +252,7 @@ public class MovieService {
 
         // Review 객체를 MovieReviewDto 객체로 변환할 때, 현재 memberId와 리뷰 작성자의 ID를 비교하여 isMine 값을 설정
         Set<MovieReviewDto> movieReviewDtos = reviews.stream()
-                .map(review -> MovieReviewDto.from(review, review.getMember().getId().equals(memberId))) // 수정된 부분
+                .map(review -> MovieReviewDto.from(review, review.getMember().getId().equals(memberId), reviewHeartRepository.findByMember_IdAndMovie_IdAndReview_Id(memberId, movieId, review.getId()).isPresent())) // 수정된 부분
                 .collect(Collectors.toSet());
 
         return new MovieWithReviewsDto(movieReviewDtos, movieId, movie.rating(), movie.backdropPath(), movie.originalTitle(),

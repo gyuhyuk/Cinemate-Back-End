@@ -82,6 +82,7 @@ public class MovieController {
         return ResponseEntity.ok().body(customResponse);
     }
 
+    // 리뷰와 함께 영화 상세 조회
     @GetMapping("/api/movie/detail-review/{movieId}")
     public ResponseEntity<CustomResponse<MovieWithReviewsDto>> getMovieWithReviews(@PathVariable Long movieId, @TokenInformation Long memberId) {
         MovieWithReviewsDto response = movieService.getMovieWithReviews(movieId, memberId);

@@ -13,20 +13,20 @@ import java.time.LocalDateTime;
  */
 public record MovieReviewDto(Long id, Long movieId, String content, Double rating,
                              Long likes, MemberReviewDto member, LocalDateTime createdAt,
-                             LocalDateTime modifiedAt, Boolean isMine) {
-    public static MovieReviewDto of(Long id, Long movieId, String content, Double rating, Long likes, MemberReviewDto member, LocalDateTime createdAt, LocalDateTime modifiedAt, Boolean isMine) {
-        return new MovieReviewDto(id, movieId, content, rating, likes, member, createdAt, modifiedAt, isMine);
+                             LocalDateTime modifiedAt, Boolean isMine, Boolean isLiked) {
+    public static MovieReviewDto of(Long id, Long movieId, String content, Double rating, Long likes, MemberReviewDto member, LocalDateTime createdAt, LocalDateTime modifiedAt, Boolean isMine, Boolean isLiked) {
+        return new MovieReviewDto(id, movieId, content, rating, likes, member, createdAt, modifiedAt, isMine, isLiked);
     }
 
     public static MovieReviewDto of(Long movieId, String content, Double rating, MemberReviewDto member) {
-        return new MovieReviewDto(null, movieId, content, rating, null, member, null, null, null);
+        return new MovieReviewDto(null, movieId, content, rating, null, member, null, null, null, null);
     }
 
     public static MovieReviewDto of(Long movieId, Double rating, MemberReviewDto member) {
-        return new MovieReviewDto(null, movieId, null, rating, null, member, null, null, null);
+        return new MovieReviewDto(null, movieId, null, rating, null, member, null, null, null, null);
     }
 
-    public static MovieReviewDto from(Review entity, Boolean isMine) {
+    public static MovieReviewDto from(Review entity, Boolean isMine, Boolean isLiked) {
         return new MovieReviewDto(
                 entity.getId(),
                 entity.getMovie().getId(),
@@ -36,7 +36,8 @@ public record MovieReviewDto(Long id, Long movieId, String content, Double ratin
                 MemberReviewDto.from(entity.getMember()),
                 entity.getCreatedAt(),
                 entity.getModifiedAt(),
-                isMine
+                isMine,
+                isLiked
         );
     }
 }
