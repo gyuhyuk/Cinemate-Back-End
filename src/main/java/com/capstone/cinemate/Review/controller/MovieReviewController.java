@@ -81,9 +81,9 @@ public class MovieReviewController {
 
     // 리뷰 삭제
     @DeleteMapping("/api/movie/{movieId}/review")
-    public CustomResponse<Long> deleteMovieReview(@PathVariable Long movieId, @TokenInformation Long memberId) {
+    public CustomResponse<String> deleteMovieReview(@PathVariable Long movieId, @TokenInformation Long memberId) {
         movieReviewService.deleteMovieReview(movieId, memberId);
-
-        return new CustomResponse<>(HttpStatus.OK.value(), "리뷰가 삭제되었습니다.", null);
+        String text = "삭제완료";
+        return new CustomResponse<>(HttpStatus.OK.value(), "리뷰가 삭제되었습니다.", text);
     }
 }
