@@ -208,9 +208,12 @@ public class MemberService {
         List<Movie> likeMovies = movieHeartRepository.findLikeMoviesByMemberId(memberId);
         List<Review> myReviews = movieReviewRepository.findByMember_Id(memberId);
 
+        long validateReviewCount = myReviews.stream().filter(review ->
+            review.getContent() != null && !review.getContent().isEmpty()).count();
+
         Map<String, Integer> result = new HashMap<>();
         result.put("likeMovies", likeMovies.size());
-        result.put("myReviews", myReviews.size());
+        result.put("myReviews", (int) validateReviewCount);
 
         return result;
     }
