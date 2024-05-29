@@ -68,7 +68,9 @@ public class MemberController {
     }
 
     @GetMapping("/api/mypage")
-    public CustomResponse<?> getMyPage(@TokenInformation Long memberId) {
+    public CustomResponse<Map<String, Object>> getMyPage(@TokenInformation Long memberId) {
         return new CustomResponse<>(HttpStatus.OK.value(), "Success", memberService.getMyPage(memberId));
     }
+
+
 }

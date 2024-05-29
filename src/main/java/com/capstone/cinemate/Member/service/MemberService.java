@@ -203,7 +203,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public Map<String, Integer> getMyPage(Long memberId) {
+    public Map<String, Object> getMyPage(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         List<Movie> likeMovies = movieHeartRepository.findLikeMoviesByMemberId(memberId);
         List<Review> myReviews = movieReviewRepository.findByMember_Id(memberId);
@@ -211,7 +211,8 @@ public class MemberService {
         long validateReviewCount = myReviews.stream().filter(review ->
             review.getContent() != null && !review.getContent().isEmpty()).count();
 
-        Map<String, Integer> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
+        result.put("nickname", member.getNickName());
         result.put("likeMovies", likeMovies.size());
         result.put("myReviews", (int) validateReviewCount);
 
