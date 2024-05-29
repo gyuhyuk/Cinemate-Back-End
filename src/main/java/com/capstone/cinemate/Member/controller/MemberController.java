@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class MemberController {
@@ -64,5 +65,10 @@ public class MemberController {
     public CustomResponse<RecommendationResponse> getMovieRecommendation(@TokenInformation Long memberId) {
         return new CustomResponse<>(
                 HttpStatus.OK.value(), "Success", memberService.recommend(memberId));
+    }
+
+    @GetMapping("/api/mypage")
+    public CustomResponse<?> getMyPage(@TokenInformation Long memberId) {
+        return new CustomResponse<>(HttpStatus.OK.value(), "Success", memberService.getMyPage(memberId));
     }
 }

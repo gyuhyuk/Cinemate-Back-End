@@ -1,20 +1,24 @@
 package com.capstone.cinemate.Member.service;
 
 import com.capstone.cinemate.Genre.repository.GenreMemberRepository;
+import com.capstone.cinemate.Heart.repository.MovieHeartRepository;
 import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Member.dto.*;
 import com.capstone.cinemate.Member.repository.MemberRepository;
+import com.capstone.cinemate.Movie.domain.Movie;
 import com.capstone.cinemate.Movie.dto.MovieListWithGenreId;
 import com.capstone.cinemate.Movie.dto.MovieResponse;
 import com.capstone.cinemate.Movie.repository.MovieRepository;
+import com.capstone.cinemate.Review.domain.Review;
+import com.capstone.cinemate.Review.repository.MovieReviewRepository;
 import com.capstone.cinemate.common.exception.CustomException;
 import com.capstone.cinemate.common.exception.ErrorCode;
 import com.capstone.cinemate.common.jwt.TokenUtils;
 import com.capstone.cinemate.common.response.CustomResponse;
 import io.jsonwebtoken.Claims;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,6 +40,8 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MovieRepository movieRepository;
     private final GenreMemberRepository genreMemberRepository;
+    private final MovieHeartRepository movieHeartRepository;
+    private final MovieReviewRepository movieReviewRepository;
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) throws CustomException {
@@ -196,4 +202,16 @@ public class MemberService {
         return restTemplate.getForObject(uriComponents.toUriString(), CustomResponse.class);
     }
 
+    @Transactional(readOnly = true)
+    public Map<String, Integer> getMyPage(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        List<Movie> likeMovies = movieHeartRepository.findLikeMoviesByMemberId(memberId);
+        List<Review> myReviews = movieReviewRepository.findByMember_Id(memberId);
+
+        Map<String, Integer> result = new HashMap<>();
+        result.put("likeMovies", likeMovies.size());
+        result.put("myReviews", myReviews.size());
+
+        return result;
+    }
 }
