@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 public class GenreService {
     private final GenreRepository genreRepository;
 
-
     @Transactional(readOnly = true)
     public List<GenreDto> getAllGenre() {
         List<Genre> genres = genreRepository.findAll();

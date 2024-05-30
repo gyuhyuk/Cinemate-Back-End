@@ -18,13 +18,10 @@ public class SpringSecurity {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.authorizeHttpRequests(auth -> auth.requestMatchers("/**").permitAll().anyRequest().authenticated());
-//        return http.build();
         http
                 // token을 사용하는 방식이기 때문에 csrf를 disable
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-//                        .requestMatchers("/api/sign-in", "/api/sign-up", "/api/memberId/**", "/api/nickname/**", "/api/genres").permitAll()
                                 .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()
                 )

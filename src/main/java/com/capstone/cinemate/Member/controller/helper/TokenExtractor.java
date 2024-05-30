@@ -1,7 +1,6 @@
 package com.capstone.cinemate.Member.controller.helper;
 
 import com.capstone.cinemate.common.exception.CustomException;
-import com.capstone.cinemate.common.exception.InvalidTokenException;
 
 import java.util.Optional;
 

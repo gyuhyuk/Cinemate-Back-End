@@ -26,7 +26,7 @@ public class MovieHeartController {
         return new CustomResponse<>(HttpStatus.OK.value(), "Success", message);
     }
 
-    // 좋아요 누른 영화
+    // 좋아요 누른 영화 조회
     @GetMapping("/api/movie/likes")
     public ResponseEntity<CustomResponse<MoviesResponse>> showLikeMovies(@TokenInformation Long memberId) {
         MoviesResponse response = movieHeartService.getLikeMovies(memberId);

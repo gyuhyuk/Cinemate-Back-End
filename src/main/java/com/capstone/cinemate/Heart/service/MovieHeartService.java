@@ -34,6 +34,7 @@ public class MovieHeartService {
     private final MemberRepository memberRepository;
     private final MovieHeartRepository movieHeartRepository;
 
+    // 좋아하는 영화 return
     @Transactional(readOnly = true)
     public MoviesResponse getLikeMovies(Long memberId) {
         List<MovieResponse> movieResponses = movieHeartRepository.findLikeMoviesByMemberId(memberId).stream()
@@ -41,6 +42,8 @@ public class MovieHeartService {
                 .toList();
         return new MoviesResponse(movieResponses);
     }
+
+    // 좋아요 누르기 및 취소
     @Transactional
     public boolean insertLikes(Long movieId, Long memberId) {
         Movie movie = movieRepository.findById(movieId)
@@ -65,6 +68,7 @@ public class MovieHeartService {
     }
 
 
+    // ml 서버에게 멤버에 따른 좋아하는 영화 post요청
     public CustomResponse saveMovieHeartToMlServer(Long memberId, Long movieId) {
         // Set up the request body
         Map<String, Object> requestBody = new HashMap<>();

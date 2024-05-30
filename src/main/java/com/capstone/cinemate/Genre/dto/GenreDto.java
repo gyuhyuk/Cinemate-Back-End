@@ -13,5 +13,4 @@ public class GenreDto {
         this.id = id;
         this.genreName = genreName;
     }
-
 }

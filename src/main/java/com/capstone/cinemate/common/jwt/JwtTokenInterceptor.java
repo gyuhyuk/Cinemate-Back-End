@@ -20,6 +20,7 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
         System.out.println("JwtToken 호출");
         String accessToken = request.getHeader("accessToken");
         System.out.println("AccessToken:" + accessToken);
+        // 추후 refresh 토큰 사용시 활성화
 //        String refreshToken = request.getHeader("REFRESH_TOKEN");
 //        System.out.println("RefreshToken:" + refreshToken);
 
