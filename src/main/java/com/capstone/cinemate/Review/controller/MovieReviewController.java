@@ -60,7 +60,6 @@ public class MovieReviewController {
         return new CustomResponse<>(HttpStatus.OK.value(), "success", movieReviews);
     }
 
-
     // 리뷰 내용 등록
     @PostMapping("/api/movie/{movieId}/review/content")
     public CustomResponse<MovieReviewResponse> postNewReview(@PathVariable("movieId") Long movieId, @RequestBody MovieReviewContentRequest request, @TokenInformation Long memberId) {

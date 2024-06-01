@@ -20,4 +20,6 @@ public interface MemberMovieRepository extends JpaRepository<MemberMovie, Long> 
     @Transactional
     @Query("DELETE FROM MemberMovie m WHERE m.member.id = :memberId")
     void deleteByMemberId(Long memberId);
+
+    List<MemberMovie> findByMemberId(Long memberId);
 }

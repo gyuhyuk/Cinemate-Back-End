@@ -132,9 +132,15 @@ public class MovieService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(IllegalArgumentException::new);
 
+        boolean hasExistingMemberMovies = !memberMovieRepository.findByMemberId(memberId).isEmpty();
+        boolean hasExistingGenreMembers = !genreMemberRepository.findByMemberId(memberId).isEmpty();
+
+        if (hasExistingMemberMovies || hasExistingGenreMembers) {
+            return;
+        }
+
         memberMovieRepository.deleteByMemberId(memberId);
         genreMemberRepository.deleteByMemberId(memberId);
-
 
         if (movieIds.size() > 6) {
             throw new CustomException(ErrorCode.BAD_REQUEST);

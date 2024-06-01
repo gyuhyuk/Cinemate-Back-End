@@ -16,4 +16,6 @@ public interface GenreMemberRepository extends JpaRepository<GenreMember, Long> 
     @Modifying
     @Query("DELETE FROM GenreMember g WHERE g.member.id = :memberId")
     void deleteByMemberId(Long memberId);
+
+    List<GenreMember> findByMemberId(Long memberId);
 }
