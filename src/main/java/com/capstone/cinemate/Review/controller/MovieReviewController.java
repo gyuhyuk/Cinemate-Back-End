@@ -52,13 +52,14 @@ public class MovieReviewController {
         return new CustomResponse<>(HttpStatus.OK.value(), "success", filteredReviews);
     }
 
-    // 각 영화들에 대한 리뷰 조회
+    //각 영화들에 대한 리뷰 조회
     @GetMapping("/api/movie/{movieId}/review/content")
     public CustomResponse<List<MovieReviewDto>> searchMovieReview(@RequestParam(required = false, defaultValue = "createdAt", value = "orderby") String criteria, @TokenInformation Long memberId, @PathVariable("movieId") Long movieId) {
-        List<MovieReviewDto> movieReviews = movieReviewService.searchMovieReview(movieId, memberId, criteria);
+        List<MovieReviewDto> movieReviews = movieReviewService.getMovieReviews(movieId, memberId, criteria);
 
         return new CustomResponse<>(HttpStatus.OK.value(), "success", movieReviews);
     }
+
 
     // 리뷰 내용 등록
     @PostMapping("/api/movie/{movieId}/review/content")

@@ -1,6 +1,8 @@
 package com.capstone.cinemate.Review.repository;
 
 import com.capstone.cinemate.Review.domain.Review;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +15,8 @@ public interface MovieReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findByMovie_IdAndId(Long movieId, Long reviewId);
     List<Review> findByMember_Id(Long memberId);
     Optional<Review> findByMovie_IdAndMember_Id(Long movieId, Long memberId);
+
+    Page<Review> findAll(Pageable pageable);
 
     @Query("SELECT r FROM Review r WHERE r.movie.id = :movieId ORDER BY r.likes DESC")
     List<Review> findByMovieIdOrderByLikesDesc(@Param("movieId") Long movieId);

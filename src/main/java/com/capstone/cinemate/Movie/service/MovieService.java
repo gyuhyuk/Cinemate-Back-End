@@ -160,22 +160,22 @@ public class MovieService {
     }
 
     public CustomResponse saveMemberMovieToMlServer(Long memberId, List<Long> movieIds) {
-        // Set up the request body
+        // request body 설정
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("userId", memberId);
         requestBody.put("movieIds", movieIds);
 
-        // Set up the HTTP headers
+        // HTTP header 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // Set up the request entity with headers and body
+        // 헤더와 바디로 requestEntity 설정
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-        // Set up the REST template
+        // Rest Template 설정
         RestTemplate restTemplate = new RestTemplate();
 
-        // Send the POST request
+        // Post request 설정
         ResponseEntity<CustomResponse> responseEntity = restTemplate.exchange(
                 ML_SERVER_URL + "/surveys/result",
                 HttpMethod.POST,
@@ -183,7 +183,7 @@ public class MovieService {
                 CustomResponse.class
         );
 
-        // Return the response body
+        // response body 리턴
         return responseEntity.getBody();
     }
 

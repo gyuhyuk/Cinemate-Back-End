@@ -45,7 +45,7 @@ public class MovieReviewService {
     }
 
     @Transactional(readOnly = true)
-    public List<MovieReviewDto> searchMovieReview(Long movieId, Long memberId, String criteria) {
+    public List<MovieReviewDto> getMovieReviews(Long movieId, Long memberId, String criteria) {
         List<Review> reviews;
         switch (criteria) {
             case "like":
