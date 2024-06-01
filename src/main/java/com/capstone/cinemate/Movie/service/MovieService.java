@@ -132,10 +132,10 @@ public class MovieService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        boolean hasExistingMemberMovies = !memberMovieRepository.findByMemberId(memberId).isEmpty();
-        boolean hasExistingGenreMembers = !genreMemberRepository.findByMemberId(memberId).isEmpty();
+        boolean hasExistingMemberMovies = !memberMovieRepository.findByMemberId(memberId).isEmpty(); // 값이 존재하면 true
+        boolean hasExistingGenreMembers = !genreMemberRepository.findByMemberId(memberId).isEmpty(); // 값이 존재하면 true
 
-        if (hasExistingMemberMovies || hasExistingGenreMembers) {
+        if (hasExistingMemberMovies && hasExistingGenreMembers) {
             return;
         }
 
