@@ -47,6 +47,7 @@ public class MovieReviewService {
     @Transactional(readOnly = true)
     public List<MovieReviewDto> getMovieReviews(Long movieId, Long memberId, String criteria) {
         List<Review> reviews;
+
         switch (criteria) {
             case "like":
                 reviews = movieReviewRepository.findByMovieIdOrderByLikesDesc(movieId);
@@ -64,7 +65,6 @@ public class MovieReviewService {
                 return List.of();
         }
 
-
         return reviews.stream()
                 .filter(review -> !StringUtils.isEmpty(review.getContent())) // 리뷰 내용이 비어있지 않은 경우만 필터링
                 .map(review -> MovieReviewDto.from(review, review.getMember().getId().equals(memberId),
@@ -76,11 +76,11 @@ public class MovieReviewService {
     // 리뷰 별점 받아오기
     @Transactional
     public Double getRating(Long movieId, Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
-
         Optional<Review> optionalReview = movieReviewRepository.findByMovie_IdAndMember_Id(movieId, memberId);
 
+        if(optionalReview.isEmpty()) {
+            return 0.0;
+        }
         return optionalReview.get().getRating();
     }
 
