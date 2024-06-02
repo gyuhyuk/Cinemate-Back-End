@@ -66,7 +66,7 @@ public class MovieController {
 
     // 설문조사에서 랜덤하게 영화 보내기
     @GetMapping("/api/survey")
-    public ResponseEntity<CustomResponse<MoviesResponse>> getRandomMovies() {
+    public ResponseEntity<CustomResponse<MoviesResponse>> getRandomMovies(@TokenInformation Long memberId) {
         MoviesResponse response = movieService.getRandomMovies();
 
         CustomResponse<MoviesResponse> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Success", response);
@@ -90,4 +90,12 @@ public class MovieController {
         CustomResponse<MovieWithReviewsDto> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Success", response);
         return ResponseEntity.ok().body(customResponse);
     }
+    @GetMapping("/api/related-movie/{movieId}")
+    public ResponseEntity<CustomResponse<List<MovieDto>>> getRelatedMovieDetails(@PathVariable Long movieId, @TokenInformation Long memberId) {
+        List<MovieDto> response = movieService.getRelatedMovieDetails(movieId, memberId);
+
+        CustomResponse<List<MovieDto>> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Success", response);
+        return ResponseEntity.ok().body(customResponse);
+    }
+
 }

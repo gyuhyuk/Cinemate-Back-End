@@ -4,10 +4,10 @@ import com.capstone.cinemate.Genre.domain.Genre;
 import com.capstone.cinemate.Genre.domain.GenreMember;
 import com.capstone.cinemate.Genre.repository.GenreMemberRepository;
 import com.capstone.cinemate.Genre.repository.GenreRepository;
-import com.capstone.cinemate.Heart.domain.MovieHeart;
 import com.capstone.cinemate.Heart.repository.MovieHeartRepository;
 import com.capstone.cinemate.Heart.repository.ReviewHeartRepository;
 import com.capstone.cinemate.Member.domain.Member;
+import com.capstone.cinemate.Member.dto.RecommendationResponse;
 import com.capstone.cinemate.Member.repository.MemberRepository;
 import com.capstone.cinemate.Movie.domain.MemberMovie;
 import com.capstone.cinemate.Movie.domain.Movie;
@@ -25,18 +25,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.net.http.HttpRequest;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.*;
@@ -73,7 +78,6 @@ public class MovieService {
                     .map(movie -> {
                         Long movieId = movie.getId();
                         boolean isLiked = likedMovieIds.contains(movieId);
-//                        System.out.println("Movie ID: " + movieId + ", isLiked: " + isLiked); // 디버깅 메시지
                         return MovieDto.from(movie, isLiked);
                     })
                     .collect(Collectors.toList());
@@ -257,5 +261,43 @@ public class MovieService {
                 movie.movieTitle(), movie.releaseDate(), movie.posterPath(),
                 movie.overview(), movie.isLiked());
     }
+
+    @Transactional(readOnly = true)
+    public List<MovieDto> getRelatedMovieDetails(Long movieId, Long memberId) {
+        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(ML_SERVER_URL+"/recommendation/movie/{movieId}")
+                .buildAndExpand(movieId);
+
+        // Header 제작
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
+
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+
+        RestTemplate restTemplate = new RestTemplate(factory);
+
+        CustomResponse<List<Long>> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<CustomResponse<List<Long>>>() {}).getBody();
+
+        List<Long> movieIds = response.getData();
+        List<MovieDto> movieDtos = new ArrayList<>();
+
+        // 각 영화 ID에 대해 MovieDto를 만들어 리스트에 추가
+        for (Long id : movieIds) {
+            // movieRepository를 사용하여 영화 정보를 가져옴
+            Movie movie = movieRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Movie not found with ID: " + id));
+
+            // MovieDto 생성 시 좋아요 여부를 설정
+            boolean liked = movieHeartRepository.existsByMemberIdAndMovieId(memberId, id);
+            MovieDto movieDto = MovieDto.from(movie, liked);
+
+            // movieDtos 리스트에 추가
+            movieDtos.add(movieDto);
+        }
+
+        return movieDtos;
+    }
+
+
+
 
 }

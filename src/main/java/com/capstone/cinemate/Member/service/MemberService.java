@@ -95,23 +95,6 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
-    public RecommendationResponse recommend(Long memberId, Long genreId) {
-        if (genreId == null) {
-            return recommend(memberId); // 기존의 단일 인자를 처리하는 메서드 호출
-        }
-
-        // 기본 추천
-        CustomResponse<List<Long>> defaultRecommendResponse = recommendRequest(memberId);
-        List<Long> defaultRecommendIdResult = defaultRecommendResponse.getData();
-
-        // 멤버의 장르 ID 리스트를 가져옴
-        List<Long> genreIdList = genreMemberRepository.findGenreIdsByMemberId(memberId);
-
-        // 장르별 영화가 묶인 리스트의 전체 리스트
-        return getRecommendationResponse(memberId, genreIdList, defaultRecommendIdResult);
-    }
-
-
     public RecommendationResponse recommend(Long memberId) {
         // 기본 추천
         CustomResponse<List<Long>> defaultRecommendResponse = recommendRequest(memberId);
@@ -170,8 +153,6 @@ public class MemberService {
         headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
 
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-//        factory.setConnectTimeout(5000); // api 호출 타임아웃
-//        factory.setReadTimeout(5000); // api 읽기 타임아웃
 
         RestTemplate restTemplate = new RestTemplate(factory);
 
@@ -181,6 +162,7 @@ public class MemberService {
 
     public CustomResponse<List<Long>> recommendRequest(Long memberId, Long genreId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
         Long userId = member.getId();
         // query parameter 방식 사용
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(ML_SERVER_URL+"/recommendation")
@@ -193,8 +175,6 @@ public class MemberService {
         headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
 
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-//        factory.setConnectTimeout(5000); // api 호출 타임아웃
-//        factory.setReadTimeout(5000); // api 읽기 타임아웃
 
         RestTemplate restTemplate = new RestTemplate(factory);
 

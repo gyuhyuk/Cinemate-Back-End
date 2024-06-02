@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Exception for application.yaml
+!application.yaml

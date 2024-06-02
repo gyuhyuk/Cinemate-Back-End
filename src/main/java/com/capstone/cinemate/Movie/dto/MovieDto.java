@@ -35,17 +35,4 @@ public record MovieDto(Long id, Long movieId,
                 isLiked
         );
     }
-
-    public Movie toEntity() {
-        return Movie.of(
-            movieId,
-            rating,
-            backdropPath,
-            originalTitle,
-            movieTitle,
-            releaseDate,
-            posterPath,
-            overview
-        );
-    }
 }
