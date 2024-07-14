@@ -4,11 +4,8 @@ import com.capstone.cinemate.Genre.domain.GenreMember;
 import com.capstone.cinemate.Heart.domain.ReviewHeart;
 import com.capstone.cinemate.Movie.domain.MemberMovie;
 import com.capstone.cinemate.Review.domain.Review;
-import com.capstone.cinemate.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.*;
 

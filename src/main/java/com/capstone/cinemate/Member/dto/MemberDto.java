@@ -21,13 +21,4 @@ public record MemberDto (
                 entity.getSurvey()
         );
     }
-
-    public Member toEntity() {
-        return Member.of(
-                email,
-                password,
-                nickName,
-                survey
-        );
-    }
 }

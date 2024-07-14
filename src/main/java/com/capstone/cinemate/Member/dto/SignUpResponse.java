@@ -3,7 +3,7 @@ package com.capstone.cinemate.Member.dto;
 import lombok.*;
 
 @Getter
-@Builder
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SignUpResponse {
     private String email;

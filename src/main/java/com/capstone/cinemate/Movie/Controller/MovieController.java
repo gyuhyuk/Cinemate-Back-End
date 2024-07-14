@@ -90,6 +90,8 @@ public class MovieController {
         CustomResponse<MovieWithReviewsDto> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Success", response);
         return ResponseEntity.ok().body(customResponse);
     }
+
+    // 관련 영화 return
     @GetMapping("/api/related-movie/{movieId}")
     public ResponseEntity<CustomResponse<List<MovieDto>>> getRelatedMovieDetails(@PathVariable Long movieId, @TokenInformation Long memberId) {
         List<MovieDto> response = movieService.getRelatedMovieDetails(movieId, memberId);
@@ -97,5 +99,4 @@ public class MovieController {
         CustomResponse<List<MovieDto>> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Success", response);
         return ResponseEntity.ok().body(customResponse);
     }
-
 }

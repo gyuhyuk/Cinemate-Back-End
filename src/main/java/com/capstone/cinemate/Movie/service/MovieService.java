@@ -7,7 +7,6 @@ import com.capstone.cinemate.Genre.repository.GenreRepository;
 import com.capstone.cinemate.Heart.repository.MovieHeartRepository;
 import com.capstone.cinemate.Heart.repository.ReviewHeartRepository;
 import com.capstone.cinemate.Member.domain.Member;
-import com.capstone.cinemate.Member.dto.RecommendationResponse;
 import com.capstone.cinemate.Member.repository.MemberRepository;
 import com.capstone.cinemate.Movie.domain.MemberMovie;
 import com.capstone.cinemate.Movie.domain.Movie;
