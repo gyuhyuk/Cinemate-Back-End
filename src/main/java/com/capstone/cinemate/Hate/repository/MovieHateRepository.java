@@ -11,5 +11,4 @@ import java.util.Optional;
 public interface MovieHateRepository extends JpaRepository<MovieHate, Long> {
     Optional<MovieHate> findByMemberAndMovie(Member member, Movie movie);
     List<MovieHate> findByMemberId(Long memberId);
-
 }
