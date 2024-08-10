@@ -36,11 +36,12 @@ public class Review extends BaseEntity {
     @Setter @Column(length = 2000) private String content; // 리뷰 내용
     @Setter @Column(nullable = false) private Double rating; // 평점
 
-    @Setter private Long likes = 0L; // 좋아요 수
+    @Setter @Builder.Default private Long likes = 0L; // 좋아요 수
 
     @Setter @ManyToOne(optional = false) private Member member; // 멤버 (ID)
 
     // 리뷰는 여러 사람에게 좋아요를 받을 수 있음
+    @Builder.Default
     @OneToMany(mappedBy = "review")
     private List<ReviewHeart> reviewHearts = new ArrayList<>();
 

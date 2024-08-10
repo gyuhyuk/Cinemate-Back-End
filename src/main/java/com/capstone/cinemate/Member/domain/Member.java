@@ -43,6 +43,7 @@ public class Member {
     private final Set<Review> memberReviews = new LinkedHashSet<>();
 
     // 멤버의 리뷰 좋아요
+    @Builder.Default
     @OneToMany(mappedBy = "member")
     private List<ReviewHeart> reviewHearts = new ArrayList<>();
 
