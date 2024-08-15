@@ -13,6 +13,9 @@ public interface GenreMemberRepository extends JpaRepository<GenreMember, Long> 
     @Query("SELECT g.genre.id FROM GenreMember g WHERE g.member.id = :memberId")
     List<Long> findGenreIdsByMemberId(Long memberId);
 
+    @Query("SELECT ge FROM GenreMember g INNER JOIN g.genre ge WHERE g.member.id = :memberId")
+    List<Genre> findGenreMemberByMemberId(Long memberId);
+
     @Modifying
     @Query("DELETE FROM GenreMember g WHERE g.member.id = :memberId")
     void deleteByMemberId(Long memberId);

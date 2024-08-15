@@ -1,7 +1,6 @@
 package com.capstone.cinemate.Movie.Controller;
 
 import com.capstone.cinemate.Member.controller.helper.TokenInformation;
-import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Movie.dto.*;
 import com.capstone.cinemate.Movie.service.MovieService;
 import com.capstone.cinemate.common.response.CustomResponse;

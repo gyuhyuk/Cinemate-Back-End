@@ -1,7 +1,9 @@
 package com.capstone.cinemate.Genre.controller;
 
 import com.capstone.cinemate.Genre.dto.GenreDto;
+import com.capstone.cinemate.Genre.dto.GenresResponse;
 import com.capstone.cinemate.Genre.service.GenreService;
+import com.capstone.cinemate.Member.controller.helper.TokenInformation;
 import com.capstone.cinemate.common.response.CustomResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,5 +27,14 @@ public class GenreController {
         CustomResponse<List<GenreDto>> response = new CustomResponse<>(HttpStatus.OK.value(), "Success", genres);
 
         return ResponseEntity.ok().body(response);
+    }
+
+    // 멤버-장르 조회
+    @GetMapping("/api/member-genres")
+    public ResponseEntity<CustomResponse<GenresResponse>> getMemberGenres(@TokenInformation Long memberId) {
+        GenresResponse response = genreService.getMemberGenres(memberId);
+
+        CustomResponse<GenresResponse> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Success", response);
+        return ResponseEntity.ok().body(customResponse);
     }
 }
