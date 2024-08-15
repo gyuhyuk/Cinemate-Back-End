@@ -8,9 +8,13 @@ import com.capstone.cinemate.common.response.CustomResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class GenreController {
@@ -36,5 +40,17 @@ public class GenreController {
 
         CustomResponse<GenresResponse> customResponse = new CustomResponse<>(HttpStatus.OK.value(), "Success", response);
         return ResponseEntity.ok().body(customResponse);
+    }
+
+    // 멤버의 장르 수정
+    @PatchMapping("/api/survey/genre")
+    public ResponseEntity<CustomResponse<Map<String, List<Long>>>> updateMemberGenres(@RequestParam List<Long> genreIds, @TokenInformation Long memberId) {
+        genreService.updateMemberGenres(genreIds, memberId);
+
+        Map<String, List<Long>> result = new HashMap<>();
+        result.put("genreIds", genreIds);
+
+        CustomResponse<Map<String, List<Long>>> response = new CustomResponse<>(HttpStatus.OK.value(), "Success", result);
+        return ResponseEntity.ok().body(response);
     }
 }
