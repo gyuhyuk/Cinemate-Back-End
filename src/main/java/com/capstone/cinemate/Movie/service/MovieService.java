@@ -4,6 +4,7 @@ import com.capstone.cinemate.Genre.domain.Genre;
 import com.capstone.cinemate.Genre.domain.GenreMember;
 import com.capstone.cinemate.Genre.repository.GenreMemberRepository;
 import com.capstone.cinemate.Genre.repository.GenreRepository;
+import com.capstone.cinemate.Hate.repository.MovieHateRepository;
 import com.capstone.cinemate.Heart.repository.MovieHeartRepository;
 import com.capstone.cinemate.Heart.repository.ReviewHeartRepository;
 import com.capstone.cinemate.Member.domain.Member;
@@ -62,6 +63,7 @@ public class MovieService {
     private final GenreMemberRepository genreMemberRepository;
     private final MemberRepository memberRepository;
     private final ReviewHeartRepository reviewHeartRepository;
+    private final MovieHateRepository movieHateRepository;
 
     // 영화 검색
     @Transactional(readOnly = true)
@@ -71,13 +73,19 @@ public class MovieService {
                 .map(movieHeart -> movieHeart.getMovie().getId())
                 .toList();
 
+        List<Long> dislikedMovieIds = movieHateRepository.findByMemberId(memberId)
+                .stream()
+                .map(movieHate -> movieHate.getMovie().getId())
+                .toList();
+
         if (movieSearchType == MovieSearchType.TITLE) {
             String sanitizedSearchValue = searchValue.replaceAll("\\s+", ""); // 공백 제거
             return movieRepository.findByMovieTitleContaining(sanitizedSearchValue).stream()
                     .map(movie -> {
                         Long movieId = movie.getId();
                         boolean isLiked = likedMovieIds.contains(movieId);
-                        return MovieDto.from(movie, isLiked);
+                        boolean isDisliked = dislikedMovieIds.contains(movieId);
+                        return MovieDto.from(movie, isLiked, isDisliked);
                     })
                     .collect(Collectors.toList());
         } else {
@@ -203,7 +211,8 @@ public class MovieService {
         MovieDto movieInfo = movieRepository.findById(movieId)
                 .map(movieEntity -> {
                     Boolean isLiked = movieHeartRepository.existsByMemberIdAndMovieId(memberId, movieId);
-                    return MovieDto.from(movieEntity, isLiked);
+                    Boolean isDisliked = movieHateRepository.existsByMemberIdAndMovieId(memberId, movieId);
+                    return MovieDto.from(movieEntity, isLiked, isDisliked);
                 })
                 .orElseThrow(() -> new EntityNotFoundException("영화가 없습니다. - movieId: " + movieId));
 
@@ -245,7 +254,8 @@ public class MovieService {
         MovieDto movie = movieRepository.findById(movieId)
                 .map(movie1 -> {
                     Boolean isLiked = movieHeartRepository.existsByMemberIdAndMovieId(memberId, movieId);
-                    return MovieDto.from(movie1, isLiked);
+                    Boolean isDisliked = movieHateRepository.existsByMemberIdAndMovieId(memberId, movieId);
+                    return MovieDto.from(movie1, isLiked, isDisliked);
                 })
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
@@ -287,7 +297,8 @@ public class MovieService {
 
             // MovieDto 생성 시 좋아요 여부를 설정
             boolean liked = movieHeartRepository.existsByMemberIdAndMovieId(memberId, id);
-            MovieDto movieDto = MovieDto.from(movie, liked);
+            boolean disliked = movieHateRepository.existsByMemberIdAndMovieId(memberId, id);
+            MovieDto movieDto = MovieDto.from(movie, liked, disliked);
 
             // movieDtos 리스트에 추가
             movieDtos.add(movieDto);

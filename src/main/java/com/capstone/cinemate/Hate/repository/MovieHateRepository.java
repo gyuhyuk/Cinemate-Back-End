@@ -15,4 +15,5 @@ public interface MovieHateRepository extends JpaRepository<MovieHate, Long> {
     @Query("SELECT mo FROM MovieHate m INNER JOIN Movie mo ON m.movie.id = mo.id WHERE m.member.id = :memberId")
     List<Movie> findHateMoviesByMemberId(Long memberId);
 
+    boolean existsByMemberIdAndMovieId(Long memberId, Long movieId);
 }

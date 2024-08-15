@@ -15,13 +15,14 @@ public record MovieDto(Long id, Long movieId,
                        LocalDateTime releaseDate,
                        String posterPath,
                        String overview,
-                       Boolean isLiked
+                       Boolean isLiked,
+                       Boolean isDisliked
 ) {
-    public static MovieDto of(Long id, Long movieId, Double rating, String backdropPath, String originalTitle, String movieTitle, LocalDateTime releaseDate, String posterPath, String overview, Boolean isLiked) {
-        return new MovieDto(id, movieId, rating, backdropPath, originalTitle, movieTitle, releaseDate, posterPath, overview, isLiked);
+    public static MovieDto of(Long id, Long movieId, Double rating, String backdropPath, String originalTitle, String movieTitle, LocalDateTime releaseDate, String posterPath, String overview, Boolean isLiked, Boolean isDisliked) {
+        return new MovieDto(id, movieId, rating, backdropPath, originalTitle, movieTitle, releaseDate, posterPath, overview, isLiked, isDisliked);
     }
 
-    public static MovieDto from(Movie entity, Boolean isLiked) {
+    public static MovieDto from(Movie entity, Boolean isLiked, Boolean isDisliked) {
         return new MovieDto(
                 entity.getId(),
                 entity.getMovieId(),
@@ -32,7 +33,8 @@ public record MovieDto(Long id, Long movieId,
                 entity.getReleaseDate(),
                 entity.getPosterPath(),
                 entity.getOverview(),
-                isLiked
+                isLiked,
+                isDisliked
         );
     }
 }
