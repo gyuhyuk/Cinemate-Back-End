@@ -1,5 +1,7 @@
 package com.capstone.cinemate.Heart.service;
 
+import com.capstone.cinemate.Hate.domain.MovieHate;
+import com.capstone.cinemate.Hate.repository.MovieHateRepository;
 import com.capstone.cinemate.Heart.domain.MovieHeart;
 import com.capstone.cinemate.Heart.repository.MovieHeartRepository;
 import com.capstone.cinemate.Member.domain.Member;
@@ -31,6 +33,7 @@ public class MovieHeartService {
     private final MovieRepository movieRepository;
     private final MemberRepository memberRepository;
     private final MovieHeartRepository movieHeartRepository;
+    private final MovieHateRepository movieHateRepository;
 
     // 좋아하는 영화 return
     @Transactional(readOnly = true)
@@ -50,15 +53,23 @@ public class MovieHeartService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
+        Optional<MovieHate> existingMovieHate = movieHateRepository.findByMemberAndMovie(member, movie);
         Optional<MovieHeart> existingMovieHeart = movieHeartRepository.findByMemberAndMovie(member, movie);
 
-        // 이미 좋아요가 눌려있으면
-        if(existingMovieHeart.isPresent()) {
-            movieHeartRepository.delete(existingMovieHeart.get());
-        }
+        // TODO : 좋아요에 없고 싫어요에 없음 -> 좋아요 DB에 추가
+        // TODO : 좋아요에 있고 싫어요에 없음 -> 좋아요 DB 제거
+        // TODO : 좋아요에 없고 싫어요에 있음 -> 싫어요 DB 제거, 좋아요 DB에 추가
+        // TODO : 좋아요에 있고 싫어요에 있음 -> 존재할 수 없음
 
-        else {
+        if(existingMovieHeart.isEmpty() && existingMovieHate.isEmpty()) {
             movieHeartRepository.save(new MovieHeart(member, movie));
+        } else if (existingMovieHeart.isPresent() && existingMovieHate.isEmpty()) {
+            movieHeartRepository.delete(existingMovieHeart.get());
+        } else if (existingMovieHeart.isEmpty() && existingMovieHate.isPresent()) {
+            movieHateRepository.delete(existingMovieHate.get());
+            movieHeartRepository.save(new MovieHeart(member, movie));
+        } else {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
         saveMovieHeartToMlServer(memberId, movieId);

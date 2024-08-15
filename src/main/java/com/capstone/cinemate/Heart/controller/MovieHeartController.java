@@ -3,7 +3,6 @@ package com.capstone.cinemate.Heart.controller;
 import com.capstone.cinemate.Heart.service.MovieHeartService;
 import com.capstone.cinemate.Member.controller.helper.TokenInformation;
 import com.capstone.cinemate.Movie.dto.MoviesResponse;
-import com.capstone.cinemate.Movie.dto.MoviesWithoutMovieIdResponse;
 import com.capstone.cinemate.common.response.CustomResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
