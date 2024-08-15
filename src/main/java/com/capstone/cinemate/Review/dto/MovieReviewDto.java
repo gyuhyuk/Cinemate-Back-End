@@ -18,13 +18,13 @@ public record MovieReviewDto(Long id, Long movieId, String content, Double ratin
         return new MovieReviewDto(id, movieId, content, rating, likes, member, createdAt, modifiedAt, isMine, isLiked);
     }
 
-    public static MovieReviewDto of(Long movieId, String content, Double rating, MemberReviewDto member) {
-        return new MovieReviewDto(null, movieId, content, rating, null, member, null, null, null, null);
-    }
-
-    public static MovieReviewDto of(Long movieId, Double rating, MemberReviewDto member) {
-        return new MovieReviewDto(null, movieId, null, rating, null, member, null, null, null, null);
-    }
+//    public static MovieReviewDto of(Long movieId, String content, Double rating, MemberReviewDto member) {
+//        return new MovieReviewDto(null, movieId, content, rating, null, member, null, null, null, null);
+//    }
+//
+//    public static MovieReviewDto of(Long movieId, Double rating, MemberReviewDto member) {
+//        return new MovieReviewDto(null, movieId, null, rating, null, member, null, null, null, null);
+//    }
 
     public static MovieReviewDto from(Review entity, Boolean isMine, Boolean isLiked) {
         return new MovieReviewDto(
