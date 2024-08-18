@@ -1,6 +1,7 @@
 package com.capstone.cinemate.Member.service;
 
 import com.capstone.cinemate.Genre.repository.GenreMemberRepository;
+import com.capstone.cinemate.Hate.repository.MovieHateRepository;
 import com.capstone.cinemate.Heart.repository.MovieHeartRepository;
 import com.capstone.cinemate.Member.domain.Member;
 import com.capstone.cinemate.Member.dto.*;
@@ -42,6 +43,7 @@ public class MemberService {
     private final GenreMemberRepository genreMemberRepository;
     private final MovieHeartRepository movieHeartRepository;
     private final MovieReviewRepository movieReviewRepository;
+    private final MovieHateRepository movieHateRepository;
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) throws CustomException {
@@ -186,6 +188,7 @@ public class MemberService {
     public Map<String, Object> getMyPage(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         List<Movie> likeMovies = movieHeartRepository.findLikeMoviesByMemberId(memberId);
+        List<Movie> dislikeMovies = movieHateRepository.findHateMoviesByMemberId(memberId);
         List<Review> myReviews = movieReviewRepository.findByMember_Id(memberId);
 
         long validateReviewCount = myReviews.stream().filter(review ->
@@ -194,6 +197,7 @@ public class MemberService {
         Map<String, Object> result = new HashMap<>();
         result.put("nickname", member.getNickName());
         result.put("likeMovies", likeMovies.size());
+        result.put("dislikeMovies", dislikeMovies.size());
         result.put("myReviews", (int) validateReviewCount);
 
         return result;
