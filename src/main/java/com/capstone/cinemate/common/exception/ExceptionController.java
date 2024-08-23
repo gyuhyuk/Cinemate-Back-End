@@ -13,17 +13,25 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 public class ExceptionController {
 
     @ExceptionHandler(Exception.class)
-    public CustomResponse<String> handleException(Exception e) {
-        return new CustomResponse<>(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                e.getMessage()
+    public ResponseEntity handleException(Exception e) {
+
+        CustomResponse customResponse = new CustomResponse<>(
+                ErrorCode.SERVER_ERROR.getStatus(),
+                e.getMessage(),
+                e.getCause()
         );
+
+        return ResponseEntity.status(resolveHttpStatus(ErrorCode.SERVER_ERROR)).body(customResponse);
+//        return new CustomResponse<>(
+//                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+//                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+//                e.getMessage()
+//        );
     }
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<CustomResponse<String>> handleBaseException(CustomException e) {
-        CustomResponse customResponse= new CustomResponse<>(
+        CustomResponse customResponse = new CustomResponse<>(
                 e.getErrorCode().getStatus(),
                 e.getErrorCode().getCode(),
                 e.getErrorCode().getCause()
